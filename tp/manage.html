@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html lang="zh-hans" >
 <head>
-<title>大数据部门图书借阅系统</title>
+<title>大数据部门图书借阅系统后台</title>
 <link rel="stylesheet" type="text/css" href="{% static 'css/base.css' %}" />
 <link rel="stylesheet" type="text/css" href="{% static 'css/changelist.css' %}" />
 <link rel="stylesheet" type="text/css" href="{% static 'css/responsive.css' %}" />
@@ -16,7 +16,7 @@
     <!-- Header -->
     <div id="header">
         <div id="branding">
-        <h1 id="site-name"><a href="/library/">大数据部门图书借阅系统</a></h1>
+        <h1 id="site-name"><a href="/library/">大数据部门图书借阅系统后台</a></h1>
         </div>
         <div id="user-tools">
             {% if visitor and visitor.is_authenticated %}
@@ -37,42 +37,28 @@
         <div id="content-main">
             <div class="module filtered" id="changelist">
                 <div id="changelist-filter">
-                    <h2>借阅历史</h2>
-                    {% if visitor and visitor.is_authenticated %}
-                        <table id="myhistory">
-                            <thead>
-                                <tr>
-                                    <th>
-                                        <div class="history_col">日期</div>
-                                    </th>
-                                    <th>
-                                        <div class="history_col">书名</div>
-                                    </th>
-                                    <th>
-                                        <div class="history_col">状态</div>
-                                    </th>
-                                    <th>
-                                        <div class="history_col">操作</div>
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody id="history">
-                                <tr class="row2">
-                                    <th class="history_book"></th>
-                                    <td class="history_date"></td>
-                                    <td class="history_status"></td>
-                                    <td class="history_action"></td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    {% endif %}
+                    <h2>图书入库</h2>
+                        <form action="" method="post">
+                            {% csrf_token %}
+                            <div class="form-row">
+                                <label class="required" for="id_book">书名:</label>
+                                <input type="text" name="book" autofocus maxlength="254" required id="id_book" />
+                            </div>
+                            <div class="form-row">
+                                <label class="required" for="id_book">库存:</label>
+                                <input type="text" name="inventory" autofocus maxlength="254" required id="id_book" value="1"/>
+                            </div>
+                            <div class="submit-row">
+                                <label>&nbsp;</label><input type="submit" value="入库" />
+                            </div>
+                        </form>
                 </div>
                 <div class="actions">
-                    <label>查询
+                    <label>筛选
                     <select name="action" id="select" required>
-                        <option value="2">全部</option>
-                        <option value="1">在库</option>
-                        <option value="0">出库</option>
+                        <option value="0">全部申请</option>
+                        <option value="2">借书申请</option>
+                        <option value="1">还书申请</option>
                     </select></label>
                 </div>
                 <div class="results">
@@ -83,13 +69,13 @@
                                <div class="result_col">书名</div>
                             </th>
                             <th>
-                               <div class="result_col">库存</div>
+                               <div class="result_col">用户</div>
                             </th>
                             <th>
-                               <div class="result_col">剩余</div>
+                               <div class="result_col">申请</div>
                             </th>
                             <th>
-                               <div class="result_col">状态</div>
+                               <div class="result_col">操作</div>
                             </th>
                         </tr>
                     </thead>

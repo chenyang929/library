@@ -12,4 +12,5 @@ urlpatterns = [
     re_path(r'api/history/(?P<pk>[0-9]+)/$', views.history_detail_api),
     re_path('api/manage/check/(?P<pk>[0-9]+)/$', views.check),
     path('api/manage/add/', views.book_add),
+    path('manage/', views.manage),
 ]

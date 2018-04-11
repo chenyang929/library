@@ -7,7 +7,11 @@ from rest_framework.decorators import api_view
 @api_view(['GET', 'POST'])
 def login_view(request):
     if request.user.is_authenticated:
-        return redirect('/library')
+        if request.user.username == 'admin':
+            link = '/library/manage/'
+        else:
+            link = '/library/'
+        return redirect(link)
     else:
         context = {}
         if request.method == 'POST':
@@ -17,7 +21,12 @@ def login_view(request):
             user = authenticate(request, username=username, password=password)
             if user is not None:
                 login(request, user)
-                return redirect('/library/')
+                print(request.user.username)
+                if request.user.username == 'admin':
+                    link = '/library/manage/'
+                else:
+                    link = '/library/'
+                return redirect(link)
             else:
                 context.update({'error_message': '用户名、邮箱或密码错误，请重新登录'})
         return render(request, 'login.html', context)

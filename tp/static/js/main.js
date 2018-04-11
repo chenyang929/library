@@ -1,16 +1,15 @@
 $(document).ready(function () {
-    //alert('加载完毕');
     book_select(1, 2);
-    history('GET',0);
+    if ($("#myhistory").length>0) {
+        history('GET',0);
+    }
     $("#select").change(function () {
         book_select(1, $(this).val())
     });
     $("#next").click(function () {
-      //alert($(this).val())
         book_select($(this).val(), 2)
     });
     $("#previous").click(function () {
-      //alert($(this).val())
         book_select($(this).val(), 2)
     });
 
@@ -42,53 +41,83 @@ function book_select(page, status) {
     }
     function succFunction(response) {
         let json = eval(response);
-        let counts = json.counts;
-        let next_page = json.next_page;
-        let previous_page = json.previous_page;
         let results = json.results;
-        let tt = '';
-        $.each(results, function (index) {
-            let id = results[index].id;
-            let book = results[index].book;
-            let inventory = results[index].inventory;
-            let remain = results[index].remain;
-            let str = '<button class="in" value="' + id + '"' + '>'+ '在库' + '</button>';
-            if (remain==0) {
-              str = '出库'
+        if (results!=null) {
+            let counts = json.counts;
+            let next_page = json.next_page;
+            let previous_page = json.previous_page;
+            let tt = '';
+            $.each(results, function (index) {
+                let id = results[index].id;
+                let book = results[index].book;
+                let inventory = results[index].inventory;
+                let remain = results[index].remain;
+                let str = '<button class="in" value="' + id + '"' + '>'+ '在库' + '</button>';
+                if (remain==0) {
+                  str = '出库'
+                }
+                tt += '<tr class="row1">'+
+                      '<th class="book">'+book+'</th>'+
+                      '<td class="inventory">'+inventory+'</td>'+
+                      '<td class="remain">'+remain+'</td>'+
+                      '<td class="status">'+str+'</td>'+
+                      '</tr>'
+            });
+            $("#results").html(tt);
+            $("#this-page").text("第"+page+"页 ");
+            if (previous_page == null) {
+              $("#previous").hide()
+            } else {
+              $("#previous").show().val(previous_page)
             }
-            tt += '<tr class="row1">'+
-                  '<th class="book">'+book+'</th>'+
-                  '<td class="inventory">'+inventory+'</td>'+
-                  '<td class="remain">'+remain+'</td>'+
-                  '<td class="status">'+str+'</td>'+
-                  '</tr>'
-        });
-        $("#results").html(tt);
-        $("#this-page").text("第"+page+"页 ");
-        if (previous_page == null) {
-          $("#previous").hide()
+            if (next_page == null) {
+              $("#next").hide()
+            } else {
+              $("#next").show().val(next_page)
+            }
+            $("#count").text(" "+counts+"条结果");
+            afterLoad();
         } else {
-          $("#previous").show().val(previous_page)
+            $("#results").html('');
+            $("#this-page").hide();
+            $("#previous").hide();
+            $("#next").hide();
+            $("#count").text("0条结果");
         }
-        if (next_page == null) {
-          $("#next").hide()
-        } else {
-          $("#next").show().val(next_page)
-        }
-        $("#count").text(" "+counts+"条结果");
-        afterLoad();
     }
 }
 function afterLoad() {
     $(function () {
+        $("button").css({
+            "background-color": "#4CAF50",
+            "font-size": "15px",
+            "border-radius": "2px",
+            "color": "white",
+            "border": "0",
+        });
+        $("#next").css({
+            "background-color": "#008CBA",
+            "font-size": "15px",
+            "border-radius": "2px",
+            "color": "white",
+            "border": "0",
+        });
+        $("#previous").css({
+            "background-color": "#008CBA",
+            "font-size": "15px",
+            "border-radius": "2px",
+            "color": "white",
+            "border": "0",
+        });
         $(".in").bind(
             "click",
             function () {
-                alert("确定借阅？");
-                history('POST', $(this).val())
+                 if(confirm("确定借阅?")){
+                     history('POST', $(this).val())
+                }
             }
         )
-    })
+    });
 }
 
 function history(type, id) {
@@ -120,14 +149,21 @@ function history(type, id) {
     function succFunction(response){
       let json = eval(response);
       if (type=='POST') {
-        alert(json.message);
-        book_select(1, $("#select").val());
-        history('GET',0);
+          let message = json.message;
+          if (message=='anonymous') {
+              if(confirm("请先登录")){
+                     location.href = '/login/'
+                }
+          } else {
+              alert(json.message);
+              book_select(1, $("#select").val());
+              history('GET',0);
+          }
       } else {
         let results = json.history;
         let tt = '';
         if (results==null) {
-          tt = '<span>暂无借阅历史</span>'
+          tt = '<span><pre>暂无借阅历史</pre></span>'
         } else {
           $.each(results, function (index) {
             let id = results[index].id;
@@ -149,8 +185,8 @@ function history(type, id) {
               str = '借阅驳回';
             }
             tt += '<tr class="row2">'+
-                  '<th class="history_book">'+book+'</th>'+
                   '<td class="history_date">'+borrow_date+'</td>'+
+                  '<th class="history_book">'+book+'</th>'+
                   '<td class="history_status">'+str+'</td>'+
                   '<td class="history_action">'+action+'</td>'+
                   '</tr>'
@@ -166,8 +202,9 @@ function afterHistoryLoad() {
         $(".back").bind(
             "click",
             function () {
-                alert("确认还书？");
-                book_back($(this).val())
+                if(confirm("确认归还该书")){
+                     book_back($(this).val())
+                }
             }
         )
     })

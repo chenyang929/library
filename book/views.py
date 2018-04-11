@@ -13,6 +13,11 @@ def index(request):
     return render(request, 'index.html', context)
 
 
+def manage(request):
+    context = {'visitor': request.user}
+    return render(request, 'manage.html', context)
+
+
 def get_start_end(page, per_page_num, count):
     page = int(page)
     total_page = int(count / per_page_num)
@@ -35,8 +40,10 @@ def get_start_end(page, per_page_num, count):
 def book_list_api(request, page):
     page = int(page)
     books = Book.objects.all()
+    if not books:
+        return Response({"results": None})
     count = books.count()
-    per_page_num = 20
+    per_page_num = 15
     mp = get_start_end(page, per_page_num, count)
     start = mp['start']
     end = mp['end']
@@ -54,8 +61,10 @@ def book_list_filter_api(request, status, page):
         status = 1
     page = int(page)
     books = Book.objects.filter(remain=status)
+    if not books:
+        return Response({"results": None})
     count = books.count()
-    per_page_num = 20
+    per_page_num = 15
     mp = get_start_end(page, per_page_num, count)
     start = mp['start']
     end = mp['end']
@@ -83,7 +92,7 @@ def history_list_api(request):
     try:
         user = User.objects.get(username=request.user)
     except User.DoesNotExist:
-        return Response(status=status.HTTP_403_FORBIDDEN)
+        return Response({'history': None})
     if request.user.username == 'admin':
         histories = History.objects.all()
     else:
@@ -116,7 +125,7 @@ def history_detail_api(request, pk):
         try:
             user = User.objects.get(username=request.user)
         except User.DoesNotExist:
-            return Response({"message": "请登录"})
+            return Response({"message": "anonymous"})
         book_remain = book.remain
         if book_remain > 0:
             book.remain = book_remain-1
