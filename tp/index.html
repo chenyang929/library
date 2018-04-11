@@ -1,0 +1,122 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="zh-hans" >
+<head>
+<title>大数据部门图书借阅系统</title>
+<link rel="stylesheet" type="text/css" href="{% static 'css/base.css' %}" />
+<link rel="stylesheet" type="text/css" href="{% static 'css/changelist.css' %}" />
+<link rel="stylesheet" type="text/css" href="{% static 'css/responsive.css' %}" />
+<meta charset="utf-8">
+<meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="robots" content="NONE,NOARCHIVE" />
+</head>
+<body class=" app-book model-book change-list" data-admin-utc-offset="28800">
+<!-- Container -->
+<div id="container">
+    <!-- Header -->
+    <div id="header">
+        <div id="branding">
+        <h1 id="site-name"><a href="/library/">大数据部门图书借阅系统</a></h1>
+        </div>
+        <div id="user-tools">
+            {% if visitor and visitor.is_authenticated %}
+                欢迎，{{ visitor.first_name }} /
+                <a href="{% url 'login:logout' %}">注销</a>
+            {% else %}
+                <a href="/">首页</a> /
+                <a href="{% url 'login:login' %}">登录</a>
+            {% endif %}
+        </div>
+    </div>
+    <!-- END Header -->
+<div class="breadcrumbs">
+书籍是人类的海洋
+</div>
+    <!-- Content -->
+    <div id="content" class="flex">
+        <div id="content-main">
+            <div class="module filtered" id="changelist">
+                <div id="changelist-filter">
+                    <h2>借阅历史</h2>
+                    {% if visitor and visitor.is_authenticated %}
+                        <table id="myhistory">
+                            <thead>
+                                <tr>
+                                    <th> 书名</th>
+                                    <th> 借阅日期</th>
+                                    <th> 状态</th>
+                                    <th> 操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="history">
+                                <tr class="row2">
+                                    <th class="history_book"></th>
+                                    <td class="history_date"></td>
+                                    <td class="history_status"></td>
+                                    <td class="history_action"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    {% else %}
+                        <a href="{% url 'login:login' %}"><button>登录查看</button></a>
+                    {% endif %}
+                </div>
+                <div class="actions">
+                    <label>查询
+                    <select name="action" id="select" required>
+                        <option value="2">全部</option>
+                        <option value="1">在库</option>
+                        <option value="0">出库</option>
+                    </select></label>
+                </div>
+                <div class="results">
+                    <table id="result_list">
+                    <thead>
+                        <tr>
+                            <th scope="col"  class="sortable column-book">
+                               <div class="text"><a href="?o=1">书名</a></div>
+                               <div class="clear"></div>
+                            </th>
+                            <th scope="col"  class="sortable column-inventory">
+                               <div class="text"><a href="?o=2">库存</a></div>
+                               <div class="clear"></div>
+                            </th>
+                            <th scope="col"  class="sortable column-remain">
+                               <div class="text"><a href="?o=3">剩余</a></div>
+                               <div class="clear"></div>
+                            </th>
+                            <th scope="col"  class="sortable column-status">
+                               <div class="text"><a href="?o=4">状态</a></div>
+                               <div class="clear"></div>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody id="results">
+                        <tr class="row1">
+                            <th class="book"></th>
+                            <td class="inventory"></td>
+                            <td class="remain"></td>
+                            <td class="status"></td>
+                        </tr>
+                    </tbody>
+                    </table>
+                </div>
+                <p id="paginator">
+                    <span id="this-page"></span>
+                    <button id="previous" value="1">上一页</button>
+                    <button id="next" value="1">下一页</button>
+                    <span id="count"></span>
+                </p>
+            </div>
+        </div>
+    </div>
+    <!-- END Content -->
+    <div id="footer"></div>
+</div>
+<!-- END Container -->
+<script src="{% static 'js/jquery-3.3.1.min.js' %}"></script>
+<script src="{% static 'js/js.cookie.min.js' %}"></script>
+<script src="{% static 'js/vue.js' %}"></script>
+<script src="{% static 'js/main.js' %}"></script>
+</body>
+</html>
