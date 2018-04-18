@@ -15,9 +15,14 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from storage.views import index, backend
 
 urlpatterns = [
-    path('library/', include('book.urls')),
-    path('login/', include('login.urls')),
+    path('library/', index),
+    path('library/backend/', backend),
+    path('library/user/', include('user.urls')),
+    path('library/login/', include('login.urls')),
+    path('library/storage', include('storage.urls')),
+    path('library/history/', include('history.urls')),
     path('admin/', admin.site.urls),
 ]

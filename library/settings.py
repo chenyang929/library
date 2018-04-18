@@ -15,24 +15,27 @@ import os
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '3l=gvb7f)$@f@wc(xk4_xtckybu72or6+axm5n#3&!gqry33qm'
+SECRET_KEY = 'e&+l^y+uysq2%x!6%dpo5i4aj2d3xg)tj&9=4s+niqz$tfs%hn'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*', ]
+ALLOWED_HOSTS = []
 
 
 # Application definition
 
 INSTALLED_APPS = [
     'rest_framework',
-    'book',
+    'user',
     'login',
+    'storage',
+    'history',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -56,7 +59,7 @@ ROOT_URLCONF = 'library.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': ['tp'],
+        'DIRS': ['frontapp'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -82,7 +85,7 @@ DATABASES = {
         'HOST': 'localhost',
         'PORT': 3306,
         'USER': 'root',
-        'PASSWORD': 'My1991_929',
+        'PASSWORD': 'My1qaz2wsx',
     }
 }
 
@@ -125,5 +128,5 @@ USE_TZ = False
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, "tp/static"),
+    os.path.join(BASE_DIR, "frontapp/static"),
 ]

@@ -1,0 +1,104 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="zh-hans" >
+<head>
+<title>大数据部门图书借阅系统--后台管理</title>
+<link rel="stylesheet" type="text/css" href="{% static 'css/base.css' %}" />
+<link rel="stylesheet" type="text/css" href="{% static 'css/changelist.css' %}" />
+<link rel="stylesheet" type="text/css" href="{% static 'css/responsive.css' %}" />
+<meta charset="utf-8">
+<meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="robots" content="NONE,NOARCHIVE" />
+</head>
+<body class=" app-book model-book change-list" data-admin-utc-offset="28800">
+<!-- Container -->
+<div id="container">
+    <!-- Header -->
+    <div id="header">
+        <div id="branding">
+        <h1 id="site-name"><a href="/library/">大数据部门图书借阅系统--<strong>后台管理</strong></a></h1>
+        </div>
+        <div id="user-tools">
+                欢迎，{{ user }} /
+                <a href="{% url 'login:logout' %}">注销</a>
+        </div>
+    </div>
+    <!-- END Header -->
+<div class="breadcrumbs">
+书籍是人类的海洋
+</div>
+    <!-- Content -->
+    <div id="content" class="flex">
+        <div id="content-main">
+            <div class="module filtered" id="changelist">
+                <div id="changelist-check">
+                    <h2>图书和用户管理</h2>
+                    <div><strong>新书入库</strong></div>
+                    <div class="book_new">
+                        图书 <input type="text" name="book" id="book_in"/><br>
+                        <input type="submit" value="提交" id="book_submit"/>
+                    </div>
+                    <div><strong>新用户添加</strong></div>
+                    <div class="user_new">
+                        邮箱 <input type="text" name="email" id="email_in"/><br>
+                        姓名 <input type="text" name="name" id="name_in"/><br>
+                        <input type="submit" value="提交" id="user_submit"/>
+                    </div>
+                </div>
+                <div class="actions">
+                    图书借阅与归还审批
+                </div>
+                <div class="results">
+                    <table id="result_list">
+                    <thead>
+                        <tr>
+                            <th>
+                               <div class="result_col">日期</div>
+                            </th>
+                            <th>
+                               <div class="result_col">书名</div>
+                            </th>
+                            <th>
+                               <div class="result_col">用户</div>
+                            </th>
+                            <th>
+                               <div class="result_col">类型</div>
+                            </th>
+                            <th>
+                               <div class="result_col">操作</div>
+                            </th>
+
+                        </tr>
+                    </thead>
+                    <tbody id="results">
+                    {% for history in history_lst %}
+                        <tr class="row1">
+                            <th class="date">{{ history.borrow_date }}</th>
+                            <td class="book">{{ history.book }}</td>
+                            <td class="user">{{ history.user.first_name }}</td>
+                            {% if history.status == 1 %}
+                            <td class="status">借阅</td>
+                            {% else %}
+                            <td class="status">归还</td>
+                            {% endif %}
+                            <td class="action">
+                                <button class="button4" value="{{ history.id }}">yes</button>
+                                <button class="button4" value="{{ history.id }}">no</button>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- END Content -->
+    <div id="footer"></div>
+</div>
+<!-- END Container -->
+<script src="{% static 'js/jquery-3.3.1.min.js' %}"></script>
+<script src="{% static 'js/jquery.cookie.js' %}"></script>
+<script src="{% static 'js/backend.js' %}"></script>
+</body>
+</html>

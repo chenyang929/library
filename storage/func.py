@@ -6,7 +6,7 @@ MYSQL_CONFIG = {
     'host': 'localhost',
     'port': 3306,
     'user': 'root',
-    'passwd': 'My1991_929',
+    'passwd': 'My1qaz2wsx',
     'db': 'library',
     'charset': 'utf8mb4',
     'cursorclass': MySQLdb.cursors.DictCursor
@@ -37,3 +37,18 @@ class Store:
         cursor = self.conn.cursor()
         cursor.close()
         self.conn.close()
+
+
+book_store = Store(**MYSQL_CONFIG)
+
+sql_insert = "insert into storage_storage(book, inventory, remain, add_date, is_delete)values(%s,1,1,CURDATE(),0)"
+
+book_set = set()
+with open('books', encoding='utf-8') as f:
+    for line in f:
+        line = line.replace('《', '').replace('》', '').strip()
+        if line:
+            book_set.add(line)
+
+for book in book_set:
+    book_store.execute_sql(sql_insert, book)

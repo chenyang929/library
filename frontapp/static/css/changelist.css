@@ -14,15 +14,36 @@
 
 }
 
-.button {
-    background-color: #4CAF50; /* Green */
-    border: none;
+.button1 {
+    background-color: #008CBA;
+    font-size: 15px;
+    border-radius: 2px;
     color: white;
-    padding: 15px 32px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 16px;
+    border: 0;
+}
+
+.button2 {
+    background-color: #4CAF50;
+    font-size: 15px;
+    border-radius: 2px;
+    color: white;
+    border: 0;
+}
+
+.button3 {
+    background-color: #FF3300;
+    font-size: 15px;
+    border-radius: 2px;
+    color: white;
+    border: 0;
+}
+
+.button4 {
+    background-color: #3399CC;
+    font-size: 15px;
+    border-radius: 2px;
+    color: white;
+    border: 0;
 }
 
 #changelist {
@@ -46,7 +67,7 @@
 
 .change-list .filtered .results, .change-list .filtered .paginator,
 .filtered #toolbar, .filtered div.xfull {
-    margin-right: 900px; /*调整结果表格宽度*/
+    margin-right: 850px; /*调整结果表格宽度*/
     width: auto;
 }
 
@@ -149,7 +170,18 @@
     top: 8px;
     right: 0;
     z-index: 1000;
-    width: 700px;  /*调整我的历史宽度*/
+    width: 800px;  /*调整我的历史宽度*/
+    background: #f8f8f8;
+    border-left: none;
+    margin: 0;
+}
+
+#changelist-check {
+    position: absolute;
+    top: 8px;
+    right: 0;
+    z-index: 1000;
+    width: 600px;  /*调整我的历史宽度*/
     background: #f8f8f8;
     border-left: none;
     margin: 0;

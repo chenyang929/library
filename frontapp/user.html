@@ -1,0 +1,82 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="zh-hans" >
+<head>
+<title>大数据部门图书借阅系统--个人中心</title>
+<link rel="stylesheet" type="text/css" href="{% static 'css/base.css' %}" />
+<link rel="stylesheet" type="text/css" href="{% static 'css/changelist.css' %}" />
+<link rel="stylesheet" type="text/css" href="{% static 'css/responsive.css' %}" />
+<meta charset="utf-8">
+<meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="robots" content="NONE,NOARCHIVE" />
+</head>
+<body class=" app-book model-book change-list" data-admin-utc-offset="28800">
+<!-- Container -->
+<div id="container">
+    <!-- Header -->
+    <div id="header">
+        <div id="branding">
+        <h1 id="site-name"><a href="/library/">大数据部门图书借阅系统</a></h1>
+        </div>
+        <div id="user-tools">
+                欢迎，{{ user }} /
+                <a href="{% url 'login:logout' %}">注销</a>
+        </div>
+    </div>
+    <!-- END Header -->
+<div class="breadcrumbs">
+书籍是人类的海洋
+</div>
+    <!-- Content -->
+        <div id="content" class="flex">
+        <div id="content-main">
+            <div class="module filtered" id="changelist">
+                    <div><strong>修改密码</strong></div>
+                    <div class="user">
+                        新密码 <input type="text" name="password" id="pw"/><br>
+                        确认密码 <input type="text" name="password" id="pw1"/><br>
+                    </div>
+                    <div>
+                        <button class="button1" id="pw_submit" value="{{ user_id }}">提交</button>
+                    </div><div></div><br>
+                <div class="myhistory">
+                    <strong>我的借阅历史</strong>
+                </div>
+                <div class="results">
+                    <table id="result_list">
+                    <thead>
+                        <tr>
+                            <th>
+                               <div class="result_col">书名</div>
+                            </th>
+                            <th>
+                               <div class="result_col">借阅日期</div>
+                            </th>
+                            <th>
+                               <div class="result_col">归还日期</div>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody id="results">
+                    {% for history in history_lst %}
+                        <tr class="row2">
+                            <th class="date">{{ history.book}}</th>
+                            <td class="book">{{ history.borrow_date }}</td>
+                            <td class="user">{{ history.back_date }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- END Content -->
+    <div id="footer"></div>
+</div>
+<!-- END Container -->
+<script src="{% static 'js/jquery-3.3.1.min.js' %}"></script>
+<script src="{% static 'js/jquery.cookie.js' %}"></script>
+<script src="{% static 'js/user.js' %}"></script>
+</body>
+</html>
