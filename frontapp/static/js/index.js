@@ -39,10 +39,7 @@ function storageList(remain, page) {
             let previous_page = json.previous_page;
             let row = '';
             $.each(results, function (index) {
-                let id = results[index].id;
-                let book = results[index].book;
-                let inventory = results[index].inventory;
-                let remain = results[index].remain;
+                let {id, book, inventory, remain} = results[index];
                 let action = '<button class="button2" value="' + id + '"' + '>' + '借阅' + '</button>';
                 let str = '在库';
                 if (remain == 0) {
@@ -126,10 +123,7 @@ function historyList(type, storageId) {
             let row = '';
             if (results != null) {
                 $.each(results, function (index) {
-                    let id = results[index].id;
-                    let book = results[index].book;
-                    let borrowDate = results[index].borrow_date;
-                    let status = results[index].status;
+                    let {id, book, borrow_date, status} = results[index];
                     let str = '借阅中';
                     let action = '<button class="button3" value="' + id + '">' + '归还</button>';
                     switch (status) {
@@ -153,24 +147,8 @@ function historyList(type, storageId) {
                             action = '';
                             break;
                     }
-                    // if (status == 0) {
-                    //     str = '借阅不通过';
-                    //     action = ''
-                    // } else if (status == 1) {
-                    //     str = '借阅审批中';
-                    //     action = ''
-                    // } else if (status == 3) {
-                    //     str = '归还不通过';
-                    //
-                    // } else if (status == 4) {
-                    //     str = '归还审批中';
-                    //     action = ''
-                    // } else if (status == 5) {
-                    //     str = '已归还';
-                    //     action = '';
-                    // }
                     row += '<tr class="row2">' +
-                        '<th class="history_date">' + borrowDate + '</th>' +
+                        '<th class="history_date">' + borrow_date + '</th>' +
                         '<td class="history_book">' + book + '</td>' +
                         '<td class="history_status">' + str + '</td>' +
                         '<td class="history_action">' + action + '</td>' +
