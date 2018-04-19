@@ -25,7 +25,7 @@ SECRET_KEY = 'e&+l^y+uysq2%x!6%dpo5i4aj2d3xg)tj&9=4s+niqz$tfs%hn'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1', '192.168.38.8']
 
 
 # Application definition
@@ -84,7 +84,7 @@ DATABASES = {
         'NAME': 'library',
         'HOST': 'localhost',
         'PORT': 3306,
-        'USER': 'root',
+        'USER': 'coder',
         'PASSWORD': 'My1qaz2wsx',
     }
 }
@@ -130,3 +130,5 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "frontapp/static"),
 ]
+
+STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
