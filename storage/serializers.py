@@ -5,7 +5,7 @@ from .models import Storage
 class StorageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Storage
-        fields = ('id', 'book', 'inventory', 'remain', 'add_date')
+        fields = ('id', 'book', 'inventory', 'remain')
 
 
 

@@ -18,13 +18,6 @@ def index(request):
     return render(request, "index.html", context)
 
 
-@login_required(login_url='login:login')
-def backend(request):
-    history_lst = History.objects.filter(status__in=[1, 4])
-    context = {"history_lst": history_lst, "user": request.user.first_name}
-    return render(request, "backend.html", context)
-
-
 def get_start_end(page, per_page_num, count):
     if count < per_page_num:  # 总数目比每页显示数目还小
         start = 0
@@ -87,19 +80,33 @@ def storage_list(request):
             return Response({"info": "图书信息缺失"})
 
 
-@api_view(['GET'])
+@api_view(['GET', 'POST'])
 def storage_detail(request, pk):
     if not request.user.is_authenticated:
         return Response({"info": "权限禁止"}, status=403)
+    try:
+        storage = Storage.objects.get(pk=pk)
+    except Storage.DoesNotExist:
+        return Response({"info": "图书不存在"})
     if request.method == 'GET':   # 获取图书详情
-        try:
-            storage = Storage.objects.get(pk=pk)
-        except Storage.DoesNotExist:
-            return Response({"info": "图书不存在"})
         serializers = StorageSerializer(storage)
         return Response(serializers.data)
     elif request.method == 'POST':   # 修改图书信息
-        pass
+        if not request.user.is_superuser:
+            return Response({"info": "权限禁止"}, status=403)
+        book = request.POST.get('book')
+        inventory = request.POST.get('inventory')
+        remain = request.POST.get('remain')
+        if all([book, inventory, remain]):
+            if Storage.objects.filter(book=book):
+                return Response({"info": "图书已存在"})
+            storage.book = book
+            storage.inventory = inventory
+            storage.remain = remain
+            storage.save()
+            return Response({"info": "图书信息修改成功"})
+        else:
+            return Response({"info": "图书信息缺失"})
     elif request.method == 'DELETE':
         storage = Storage.objects.get(pk=pk)
         storage.is_delete = 1

@@ -10,7 +10,7 @@ class Storage(models.Model):
 
     class Meta:
         #verbose_name = '图书库存'
-        ordering = ['-add_date']
+        ordering = ['-id']
 
     def __str__(self):
         return self.book
