@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     'login',
     'storage',
     'history',
+    'api',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -59,7 +60,7 @@ ROOT_URLCONF = 'library.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': ['frontapp'],
+        'DIRS': ['tp'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -128,7 +129,7 @@ USE_TZ = False
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, "frontapp/static"),
+    os.path.join(BASE_DIR, "tp/static"),
 ]
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'static/')

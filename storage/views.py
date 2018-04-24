@@ -1,3 +1,4 @@
+from urllib import parse
 from django.shortcuts import render
 from .models import Storage
 from .serializers import StorageSerializer
@@ -46,8 +47,12 @@ def storage_list(request):
     if not request.user.is_authenticated:
         return Response({"info": "权限禁止"}, status=403)
     if request.method == 'GET':   # 获取库存列表
+        search_str = re.findall(r'search=(.+)', request.META.get('QUERY_STRING'))
         remain_str = re.findall(r'remain=(\d+)', request.META.get('QUERY_STRING'))
-        if remain_str and int(remain_str[0]) in (0, 1):
+        if search_str:
+            search_str = parse.unquote(search_str[0])
+            storage_lst = Storage.objects.filter(book__icontains=search_str)
+        elif remain_str and int(remain_str[0]) in (0, 1):
             storage_lst = Storage.objects.filter(remain=int(remain_str[0]))
         else:
             storage_lst = Storage.objects.all()

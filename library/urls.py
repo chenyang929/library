@@ -19,6 +19,7 @@ from storage.views import index
 
 urlpatterns = [
     path('library/', index),
+    path('library/api/', include('api.urls')),
     path('library/backend/', include('backend.urls')),
     path('library/user/', include('user.urls')),
     path('library/login/', include('login.urls')),

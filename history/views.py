@@ -30,6 +30,9 @@ def history_list(request):
             storage = Storage.objects.get(pk=storage_id)
         except Storage.DoesNotExist:
             return Response({"info": "图书不存在"})
+        my_history_list = History.objects.filter(user=request.user, status__in=[1, 2, 3, 4])
+        if len(my_history_list) >= 2:
+            return Response({"info": "当前已借阅两本图书!"})
         remain = storage.remain
         if remain > 0:
             storage.remain = remain - 1
@@ -66,11 +69,15 @@ def history_detail(request, pk):
                         storage = Storage.objects.get(pk=history.book_id)
                         storage.remain += 1
                         storage.save()
-        else:
-            if history.user == request.user and status_old == 2:
-                history.status = 4
+        elif history.user == request.user:
+                delay = request.POST.get('delay')
+                if delay:
+                    history_delay = history.delay
+                    history.delay = int(history_delay) ^ 1
+                elif status_old == 2:
+                    history.status = 4
         history.save()
-        return Response({"status": history.status})
+        return Response({"status": history.status, "delay": history.delay})
     elif request.method == 'GET':
         histories = History.objects.filter(pk=pk, user=request.user)
         if histories:
