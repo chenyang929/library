@@ -13,9 +13,13 @@ from history.models import History
 @login_required(login_url='login:login')
 def index(request):
     storage_lst = Storage.objects.all()
+    count = storage_lst.count()
+    total_page = int(count / 15)
+    if int(count % 15) != 0:
+        total_page += 1
     history_lst = History.objects.filter(user=request.user, status__in=[1, 2, 4])
     context = {"storage_lst": storage_lst[:15], "count": storage_lst.count(), "history_lst": history_lst,
-               "user": request.user.first_name}
+               "user": request.user.first_name, "total_page": total_page, "next_page": '/library/api/storage?page=2'}
     return render(request, "index.html", context)
 
 

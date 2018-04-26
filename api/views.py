@@ -289,7 +289,7 @@ def get_start_end(page, per, count):
         start = (page - 1) * per
         end = page * per
     return {"start": start, "end": end, "count": count, "total_page": total_page, "per": per,
-            "previous_page": previous_page, "next_page": next_page}
+            "previous_page": previous_page, "next_page": next_page, "page": page}
 
 
 def get_format_results(query_str, page, per, lst, serializer, path):

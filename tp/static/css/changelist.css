@@ -3,6 +3,23 @@
 
 /*自定义*/
 
+.row1:hover {
+    background-color: #CCFFFF;
+}
+.search {
+    display: inline;
+}
+
+.results {
+    margin-top: 15px;
+}
+#search-button {
+    background-color: #33CC99;
+    font-size: 15px;
+    border-radius: 2px;
+    color: white;
+    border: 0;
+}
 .result_col {
     font-size: 15px;
     padding-left:5px;
@@ -313,7 +330,7 @@
 /* ACTIONS */
 
 .filtered .actions {
-    margin-right: 280px;
+    margin-right: 50px;
     border-right: none;
 }
 

@@ -1,98 +1,118 @@
 $(document).ready(function () {
-    $("#select").change(function () {
-        storageList($(this).val(), 1);
+    let str = $("#tr71 th.book").text();
+    let s = "业";
+    let reg = new RegExp("(" + s + ")", "i");
+    let newstr = str.replace(reg, "<span style='color:red'>$1</span>");
+    $("#tr71 th.book").html(newstr);
+
+    let select = $("#select");
+    let per = $("#per");
+    select.change(function () {
+        selectStorage(select.val(), per.val())
     });
+    per.change(function () {
+        selectStorage(select.val(), per.val());
+    });
+    $("#book-search").bind('keypress', function (event) {
+        let search_var = $(this).val();
+        if (search_var.length!=0 && event.keyCode == 13 ) {
+            searchStorage(search_var, per.val());
+            $(this).val("")
+        }
+     });
     $(".button1").click(function () {
-        storageList($("#select").val(), $(this).val());
+        goPage($(this).val());
     });
+
     $(".button2").click(function () {
-        if(confirm("确认借阅该书1")){
-            historyList('POST', $(this).val())
+        let storage_id = $(this).val();
+        let book = $("#"+ storage_id).text();
+        if(confirm(book + "？借阅")){
+            historyList('POST', storage_id)
         }
     });
-    $(".button3").click(function () {
-        if(confirm("确认归还该书1")){
-            backBook($(this).val())
-        }
-    });
+    // $(".button3").click(function () {
+    //     if(confirm("确认归还该书1")){
+    //         backBook($(this).val())
+    //     }
+    // });
 });
 
-function storageList(remain, page) {
-    $.ajax({
-        url: '/library/storage' + '?remain=' + remain + '&page=' + page,
-        type: 'GET',
-        cache: false,
-        dataType: 'json',
-        error: errorFunction,
-        success: successFunction
-    });
+function goPage(url) {
+    $.get(url, storageSuccess)
 
-    function errorFunction() {
-        alert("请求失败");
-    }
-
-    function successFunction(response) {
-        let json = eval(response);
-        let results = json.results;
-        if (results != null) {
-            let next_page = json.next_page;
-            let previous_page = json.previous_page;
-            let row = '';
-            $.each(results, function (index) {
-                let {id, book, inventory, remain} = results[index];
-                let action = '<button class="button2" value="' + id + '"' + '>' + '借阅' + '</button>';
-                let str = '在库';
-                if (remain == 0) {
-                    str = '出库';
-                    action = ''
-                }
-                row += '<tr class="row1">' +
-                    '<th class="book">' + book + '</th>' +
-                    '<td class="inventory">' + inventory + '</td>' +
-                    '<td class="remain">' + remain + '</td>' +
-                    '<td class="status">' + str + '</td>' +
-                    '<td class="action">' + action + '</td>' +
-                    '</tr>'
-            });
-            $("#results").html(row);
-            let thisPage = '<span class="this-page">' + '第' + page + '页</span> ';
-            let previousPage = '<button class="button1" value="' + previous_page +'"' + '>' + '上一页</button> ';
-            let nextPage = '<button class="button1" value="' + next_page + '"' + '>' + '下一页</button> ';
-            let count = '<span class="count">' + json.counts + '条结果</span>';
-            if (previous_page == null) {
-                previousPage = ''
-            }
-            if (next_page == null) {
-                nextPage = ''
-            }
-            $('#paginator').html(thisPage + previousPage + nextPage + count);
-            storageListAfterLoad()
-
-        }
-    }
 }
 
-function storageListAfterLoad() {
+function selectStorage(remain, per) {
+    let url = '/library/api/storage';
+    $.get(url, {remain: remain, per: per}, storageSuccess)
+}
+
+function searchStorage(book, per) {
+    let url = '/library/api/storage';
+    $.get(url, {book: book, per: per}, storageSuccess)
+}
+
+function storageSuccess(response) {
+    let json = eval(response);
+    let count = json.count;
+    let total_page = json.total_page;
+    let page = json.page;
+    let next_page = json.next_page;
+    let previous_page = json.previous_page;
+    let results = json.results;
+    let thisPage = '<span class="this-page">' + '第' + page + '页</span> ';
+    let previousPage = '<button class="button1" value="' + previous_page +'"' + '>' + '上一页</button> ';
+    let nextPage = '<button class="button1" value="' + next_page + '"' + '>' + '下一页</button> ';
+    let totalPage = '<span class="total_page"> 共 ' + total_page + ' 页 </span>';
+    let count_t = '<span class="count">' + count + '条结果</span>';
+    if (previous_page == null) {
+            previousPage = ''
+        }
+        if (next_page == null) {
+            nextPage = ''
+        }
+    let row = '';
+    if (results.length > 0) {
+        $.each(results, function (index) {
+            let {id, book, inventory, remain} = results[index];
+            let action = '<button class="button2" value="' + id + '"' + '>' + '借阅' + '</button>';
+            let str = '在库';
+            if (remain == 0) {
+                str = '出库';
+                action = ''
+            }
+            row += '<tr class="row1">' +
+                '<th class="book" id="' + id + '">' + book + '</th>' +
+                '<td class="inventory">' + inventory + '</td>' +
+                '<td class="remain">' + remain + '</td>' +
+                '<td class="status">' + str + '</td>' +
+                '<td class="action">' + action + '</td>' +
+                '</tr>'
+        });
+    } else {
+        thisPage = '';
+        totalPage = '';
+    }
+    $("#results").html(row);
+    $('#paginator').html(thisPage + previousPage + nextPage + totalPage + count_t);
+    storageAfterLoad()
+}
+
+function storageAfterLoad() {
     $('.button1').bind(
         "click",
         function () {
-            storageList($("select").val(), $(this).val())
-    });
-    $('.button2').bind(
-        "click",
-        function () {
-            if(confirm("确认借阅该书2")){
-            historyList('POST', $(this).val())
-        }
+            goPage($(this).val())
     });
 }
 
 function historyList(type, storageId) {
     $.ajax({
-        url: '/library/history/',
+        url: '/library/api/history/',
         data: {"storage_id": storageId},
         type: type,
-        cache: false,
+        //cache: false,
         dataType: 'json',
         xhrFields: {
              withCredentials: true
@@ -109,16 +129,20 @@ function historyList(type, storageId) {
         alert("请求失败");
     }
     function successFunction(response) {
+        let json = eval(response);
+        let msg = json.info;
         if (type == 'POST') {
-            let s = $(".this-page").text();
-            let m = s.match(/[0-9]+/);
-            if (m == null) {
-                m = '1'
+        //storageList($("#select").val(), m);
+            if (msg == 'success') {
+                //$("#tr").hide();
+                $("#tr" + storageId + " td.status").text("出库");
+                $("#tr" + storageId + " td.action").text("");
+                historyList('GET', 1)
+            } else {
+                alert(msg)
             }
-            storageList($("#select").val(), m);
-            historyList('GET', 1)
+
         } else if (type == 'GET') {
-            let json = eval(response);
             let results = json.history;
             let row = '';
             if (results != null) {
@@ -197,5 +221,3 @@ function backBook(historyId) {
         historyList('GET', 1);
     }
 }
-
-

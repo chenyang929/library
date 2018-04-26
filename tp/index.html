@@ -84,13 +84,27 @@
                             </tbody>
                         </table>
                 </div>
-                <div class="actions">
-                    <label>查询
+
+                <div class="actions search">
+                    <label>状态筛选
                     <select name="action" id="select" required>
                         <option value="2">全部</option>
                         <option value="1">在库</option>
                         <option value="0">出库</option>
                     </select></label>
+                </div>
+                <div class="actions search">
+                    <label>每页显示
+                    <select name="action" id="per" required>
+                        <option value="15">15</option>
+                        <option value="20">20</option>
+                        <option value="30">30</option>
+                    </select></label>
+                </div>
+                <div class="search">
+                    <label>
+                        <input type="text" name="search" id="book-search" placeholder="图书搜索"/>
+                    </label>
                 </div>
                 <div class="results">
                     <table id="result_list">
@@ -115,8 +129,8 @@
                     </thead>
                     <tbody id="results">
                     {% for storage in storage_lst %}
-                        <tr class="row1">
-                            <th class="book">{{ storage.book }}</th>
+                        <tr class="row1" id="tr{{ storage.id }}">
+                            <th class="book" id="{{ storage.id }}">{{ storage.book }}</th>
                             <td class="inventory">{{ storage.inventory }}</td>
                             <td class="remain">{{ storage.remain }}</td>
                             {% if storage.remain == 0 %}
@@ -133,7 +147,8 @@
                 </div>
                 <p id="paginator">
                     <span class="this-page">第1页</span>
-                    <button class="button1" value="2">下一页</button>
+                    <button class="button1" value="{{ next_page }}">下一页</button>
+                    <span class="total_page"> 共 {{ total_page }} 页 </span>
                     <span class="count"> {{ count }} 条结果</span>
                 </p>
             </div>
