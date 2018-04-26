@@ -8,6 +8,8 @@ from .serializers import UserSerializer, StorageSerializer, HistorySerializer
 from storage.models import Storage
 from history.models import History
 
+PER = 15   # 分页显示每页数量
+
 """
 用户API
 GET /user   获取全部用户信息   admin
@@ -22,20 +24,15 @@ def user_list(request):
     if not request.user.is_superuser:
         return Response({"info": "权限禁止"}, status=403)
     if request.method == 'GET':
-        search_str = re.findall(r'search=(.+)', request.META.get('QUERY_STRING'))
+        query_str, page, per = get_new_query(request.META.get('QUERY_STRING'))
+        search_str = re.findall(r'name=(.+)&?', query_str)
         if search_str:
-            search_str = parse.unquote(search_str[0])
+            search_str = parse.unquote(search_str[0].split('&')[0])
             user_lst = User.objects.filter(first_name__icontains=search_str)
         else:
             user_lst = User.objects.filter(is_staff=0)
-        per_page_num = 15  # 每页显示15个
-        page = 1
-        page_str = re.findall(r'page=(\d+)', request.META.get('QUERY_STRING'))
-        if page_str:
-            page = int(page_str[0])
-        mp = per_page(user_lst, per_page_num, page, UserSerializer)
+        mp = get_format_results(query_str, page, per, user_lst, UserSerializer, request.META.get('PATH_INFO'))
         return Response(mp)
-
     elif request.method == 'POST':
         email = request.POST.get('email')
         username = request.POST.get('name')
@@ -67,7 +64,7 @@ def user_detail(request, pk):
             if all([user_name, first_name]):
                 new_user = User.objects.filter(username=user_name)
                 if new_user and int(new_user[0].id) != int(pk):
-                    return Response({"info": "用户信息重复"})
+                    return Response({"info": "用户已存在"})
                 user.username = user_name
                 user.first_name = first_name
                 user.email = user_name
@@ -103,21 +100,17 @@ def storage_list(request):
     if not request.user.is_authenticated:
         return Response({"info": "权限禁止"}, status=403)
     if request.method == 'GET':   # 获取库存列表
-        search_str = re.findall(r'search=(.+)', request.META.get('QUERY_STRING'))
-        remain_str = re.findall(r'remain=(\d+)', request.META.get('QUERY_STRING'))
+        query_str, page, per = get_new_query(request.META.get('QUERY_STRING'))
+        search_str = re.findall(r'book=(.+)&?', query_str)
+        remain_str = re.findall(r'remain=(\d+)', query_str)
         if search_str:
-            search_str = parse.unquote(search_str[0])
+            search_str = parse.unquote(search_str[0].split('&')[0])
             storage_lst = Storage.objects.filter(book__icontains=search_str)
         elif remain_str and int(remain_str[0]) in (0, 1):
             storage_lst = Storage.objects.filter(remain=int(remain_str[0]))
         else:
             storage_lst = Storage.objects.all()
-        per_page_num = 15  # 每页显示15个
-        page = 1
-        page_str = re.findall(r'page=(\d+)', request.META.get('QUERY_STRING'))
-        if page_str:
-            page = int(page_str[0])
-        mp = per_page(storage_lst, per_page_num, page, StorageSerializer)
+        mp = get_format_results(query_str, page, per, storage_lst, StorageSerializer, request.META.get('PATH_INFO'))
         return Response(mp)
 
     elif request.method == 'POST':   # 新书入库
@@ -185,16 +178,22 @@ def history_list(request):
     if not request.user.is_authenticated:
         return Response({"info": "权限禁止"}, status=403)
     if request.method == 'GET':
+        query_str, page, per = get_new_query(request.META.get('QUERY_STRING'))
         if request.user.is_superuser:
-            history_lst = History.objects.all()
+            user_str = re.findall(r'user=(.+)&?', query_str)
+            book_str = re.findall(r'book=(.+)&?', query_str)
+            print(book_str)
+            if user_str:
+                user_str = parse.unquote(user_str[0].split('&')[0])
+                history_lst = History.objects.filter(user__first_name=user_str)
+            elif book_str:
+                book_str = parse.unquote(book_str[0].split('&')[0])
+                history_lst = History.objects.filter(book__book=book_str)
+            else:
+                history_lst = History.objects.all()
         else:
             history_lst = History.objects.filter(user=request.user)
-        per_page_num = 15  # 每页显示15个
-        page = 1
-        page_str = re.findall(r'page=(\d+)', request.META.get('QUERY_STRING'))
-        if page_str:
-            page = int(page_str[0])
-        mp = per_page(history_lst, per_page_num, page, HistorySerializer)
+        mp = get_format_results(query_str, page, per, history_lst, HistorySerializer, request.META.get('PATH_INFO'))
         return Response(mp)
     elif request.method == 'POST':
         storage_id = request.POST.get('storage_id')
@@ -243,7 +242,7 @@ def history_detail(request, pk):
                         storage.remain += 1
                         storage.save()
         elif history.user == request.user:
-                delay = request.POST.get('delay')
+                delay = request.POST.get('delay')   # 续借
                 if delay and status_old == 2:
                     history_delay = history.delay
                     history.delay = int(history_delay) ^ 1
@@ -257,29 +256,27 @@ def history_detail(request, pk):
         return Response({"info": "success", "results": [serializers.data]})
 
 
-def per_page(lst, per_page_num, page, serializer):
-    count = lst.count()
-    mp = get_start_end(page, per_page_num, count)
-    start = mp['start']
-    end = mp['end']
-    previous_page = mp['previous_page']
-    next_page = mp['next_page']
-    lst_per = lst[start:end]
-    my_serializer = serializer(lst_per, many=True)
-    mp = {"info": "success", "counts": count, "results": my_serializer.data, "next_page": next_page,
-          "previous_page": previous_page}
-    return mp
+def get_new_query(query_str):
+    if query_str and ('page' not in query_str):
+        query_str += '&page=1'
+    elif not query_str:
+        query_str = 'page=1'
+    print(query_str)
+    page = int(re.findall(r'page=(\d+)', query_str)[0])
+    per_str = re.findall(r'per=(\d+)', query_str)
+    per = int(per_str[0]) if per_str else PER
+    return query_str, page, per
 
 
-def get_start_end(page, per_page_num, count):
-    if count < per_page_num:  # 总数目比每页显示数目还小
+def get_start_end(page, per, count):
+    if count < per:  # 总数目比每页显示数目还小
+        total_page = 1 if count > 0 else 0
         start = 0
         end = count
         previous_page = next_page = None
     else:
-        page = int(page)
-        total_page = int(count / per_page_num)
-        if int(count % per_page_num) != 0:
+        total_page = int(count / per)
+        if int(count % per) != 0:
             total_page += 1
         previous_page = page - 1
         next_page = page + 1
@@ -289,7 +286,31 @@ def get_start_end(page, per_page_num, count):
         if page >= total_page:
             page = total_page
             next_page = None
-        start = (page - 1) * per_page_num
-        end = page * per_page_num
-    return {"start": start, "end": end, "previous_page": previous_page, "next_page": next_page}
+        start = (page - 1) * per
+        end = page * per
+    return {"start": start, "end": end, "count": count, "total_page": total_page, "per": per,
+            "previous_page": previous_page, "next_page": next_page}
+
+
+def get_format_results(query_str, page, per, lst, serializer, path):
+    count = lst.count()
+    mp = get_start_end(page, per, count)
+    next_page = mp['next_page']
+    previous_page = mp['previous_page']
+    if next_page:
+        mp['next_page'] = get_next_previous_page_link(next_page, query_str, path)
+    if previous_page:
+        mp['previous_page'] = get_next_previous_page_link(previous_page, query_str, path)
+    lst_per = lst[mp['start']:mp['end']]
+    my_serializer = serializer(lst_per, many=True)
+    mp.pop('start')
+    mp.pop('end')
+    mp.update({"info": "success", "results": my_serializer.data})
+    return mp
+
+
+def get_next_previous_page_link(page, query_str, path):
+    page_str = 'page={}'.format(page)
+    link = '{}?{}'.format(path, re.sub(r'page=(\d+)', page_str, query_str))
+    return link
 
