@@ -24,9 +24,9 @@
     </div>
     <!-- END Header -->
 <div class="bread">
-<div class="active">借阅管理</div>
+<div><a href="{% url 'backend:index' %}">借阅管理</a></div>
 <div class="storage"><a href="{% url 'backend:backend_storage' %}">图书管理</a></div>
-<div class="user"><a href="{% url 'backend:backend_user' %}">用户管理</a></div>
+<div class="user active">用户管理</div>
 <div class="buy"><a href="{% url 'backend:backend_buy' %}">申购管理</a></div>
 </div>
     <!-- Content -->
@@ -34,60 +34,34 @@
         <div id="content-main">
             <div class="module filtered" id="changelist">
                 <div id="changelist-check">
-                    <h2>新增借阅</h2>
-                    <div class="history_new" style="margin-top: 10px">
-                    <label>用户
-                    <select class="user" style="width:100px;" required>
-                        {% for user in user_lst %}
-                            <option value="{{ user.id }}">{{ user.first_name }}</option>
-                        {% endfor %}
-                    </select></label>
-                    <label>图书
-                    <select class="book" style="width:100px;" required>
-                        {% for storage in storage_lst %}
-                            <option value="{{ storage.id }}">{{ storage.book }}</option>
-                        {% endfor %}
-                    </select></label><br>
-                    <input type="submit" value="提交" id="history_submit"/>
-                </div>
+                    <h2>新增用户</h2>
+                    <div class="user_new" style="margin-top: 10px">
+                        邮箱 <input type="text" name="email" id="email_in"/><br>
+                        姓名 <input type="text" name="name" id="name_in"/><br>
+                        <input type="submit" value="提交" id="user_submit"/>
+                    </div>
                 </div>
                 <div class="results">
                     <table id="result_list">
                     <thead>
                         <tr>
                             <th>
-                               <div class="result_col">日期</div>
+                               <div class="result_col">用户名</div>
                             </th>
                             <th>
-                               <div class="result_col">书名</div>
-                            </th>
-                            <th>
-                               <div class="result_col">用户</div>
-                            </th>
-                            <th>
-                               <div class="result_col">类型</div>
+                               <div class="result_col">邮箱</div>
                             </th>
                             <th>
                                <div class="result_col">操作</div>
                             </th>
-
                         </tr>
                     </thead>
                     <tbody id="results">
-                    {% for history in history_lst %}
-                        <tr class="row1" id="{{ history.id }}">
-                            <th class="date">{{ history.borrow_date }}</th>
-                            <td class="book">{{ history.book }}</td>
-                            <td class="user">{{ history.user.first_name }}</td>
-                            {% if history.status == 1 %}
-                            <td class="status">借阅</td>
-                            {% else %}
-                            <td class="status">归还</td>
-                            {% endif %}
-                            <td class="action">
-                                <button class="bt-yn" name="yes">同意</button>
-                                <button class="bt-yn" name="no">不同意</button>
-                            </td>
+                    {% for user in user_lst %}
+                        <tr class="row1" id="{{ user.id }}">
+                            <th class="first_name">{{ user.first_name }}</th>
+                            <td class="email">{{ user.email }}</td>
+                            <td class="action"><button class="bt-modify">编辑</button></td>
                         </tr>
                     {% endfor %}
                     </tbody>

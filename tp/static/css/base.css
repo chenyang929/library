@@ -642,7 +642,6 @@ div.system-message p.system-message-title {
 }
 
 /* BREADCRUMBS */
-
 div.breadcrumbs {
     background: #79aec8;
     padding: 10px 40px;
@@ -659,6 +658,40 @@ div.breadcrumbs a {
 div.breadcrumbs a:focus, div.breadcrumbs a:hover {
     color: #c4dce8;
 }
+
+/* 自定义 */
+
+div.bread {
+    background: #79aec8;
+    padding: 10px 40px;
+    border: none;
+    font-size: 14px;
+    color: #c4dce8;
+    text-align: left;
+}
+div.bread a {
+    color: #fff;
+    text-decoration: none;
+
+}
+
+div.bread a:focus, div.bread a:hover {
+    color: #c4dce8;
+}
+
+div.bread div.active {
+    color: #FFFFCC;
+}
+
+div.bread div {
+    font-size: 16px;
+    display: inline;
+}
+
+div.bread div.storage, div.bread div.user, div.bread div.buy{
+    margin-left: 50px;
+}
+
 
 /* ACTION ICONS */
 

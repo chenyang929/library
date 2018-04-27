@@ -39,7 +39,7 @@
     border: 0;
 }
 
-.bt-storage {
+.bt-storage , .bt-history-add, .bt-modify, .bt-yn{
     background-color: #4CAF50;
     font-size: 15px;
     border-radius: 2px;
@@ -48,20 +48,13 @@
 }
 
 .bt-history {
-    background-color: #FF3300;
+    background-color: #CCCC66;
     font-size: 15px;
     border-radius: 2px;
     color: white;
     border: 0;
 }
 
-.button4 {
-    background-color: #3399CC;
-    font-size: 15px;
-    border-radius: 2px;
-    color: white;
-    border: 0;
-}
 
 #changelist {
     position: relative;

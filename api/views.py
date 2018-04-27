@@ -34,8 +34,8 @@ def user_list(request):
         mp = get_format_results(query_str, page, per, user_lst, UserSerializer, request.META.get('PATH_INFO'))
         return Response(mp)
     elif request.method == 'POST':
-        email = request.POST.get('email')
-        username = request.POST.get('name')
+        email = request.POST.get('email').strip()
+        username = request.POST.get('name').strip()
         if User.objects.filter(username=email):
             return Response({"info": "用户已存在"})
         if all([email, username]):
@@ -116,8 +116,8 @@ def storage_list(request):
     elif request.method == 'POST':   # 新书入库
         if not request.user.is_superuser:
             return Response({"info": "权限禁止"}, status=403)
-        book = request.POST.get('book')
-        inventory = request.POST.get('inventory')
+        book = request.POST.get('book').strip()
+        inventory = request.POST.get('inventory').strip()
         if book and inventory:
             if Storage.objects.filter(book=book):
                 return Response({"info": "图书已存在"})
@@ -201,18 +201,29 @@ def history_list(request):
             storage = Storage.objects.get(pk=storage_id)
         except Storage.DoesNotExist:
             return Response({"info": "图书不存在"})
-        my_history_list = History.objects.filter(user=request.user, status__in=[1, 2, 3, 4])
-        if len(my_history_list) >= 2:
-            return Response({"info": "当前已借阅两本图书!"})
         remain = storage.remain
-        if remain > 0:
+        if remain == 0:
+            return Response({"info": "图书库存不足，无法借阅"})
+        if request.user.is_superuser:
+            user_id = request.POST.get('user_id')
+            try:
+                user = User.objects.get(pk=user_id)
+            except User.DoesNotExist:
+                return Response({"info": "用户不存在"})
+            storage.remain = remain - 1
+            storage.save()
+            new_history = History.objects.create(book=storage, user=user, status=2)
+            serializers = HistorySerializer(new_history)
+            return Response({"info": "success", "results": [serializers.data]}, status=201)
+        else:
+            my_history_list = History.objects.filter(user=request.user, status__in=[1, 2, 3, 4])
+            if len(my_history_list) >= 2:
+                return Response({"info": "当前已借阅两本图书!"})
             storage.remain = remain - 1
             storage.save()
             new_history = History.objects.create(book=storage, user=request.user)
             serializers = HistorySerializer(new_history)
             return Response({"info": "success", "results": [serializers.data]}, status=201)
-        else:
-            return Response({"info": "ops!手慢了"})
 
 
 @api_view(['GET', 'POST'])

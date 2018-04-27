@@ -24,32 +24,31 @@
     </div>
     <!-- END Header -->
 <div class="bread">
-<div class="active">借阅管理</div>
+<div ><a href="{% url 'backend:index' %}">借阅管理</a></div>
 <div class="storage"><a href="{% url 'backend:backend_storage' %}">图书管理</a></div>
 <div class="user"><a href="{% url 'backend:backend_user' %}">用户管理</a></div>
-<div class="buy"><a href="{% url 'backend:backend_buy' %}">申购管理</a></div>
+<div class="buy active">申购管理</div>
 </div>
     <!-- Content -->
     <div id="content" class="flex">
         <div id="content-main">
             <div class="module filtered" id="changelist">
                 <div id="changelist-check">
-                    <h2>新增借阅</h2>
-                    <div class="history_new" style="margin-top: 10px">
-                    <label>用户
-                    <select class="user" style="width:100px;" required>
-                        {% for user in user_lst %}
-                            <option value="{{ user.id }}">{{ user.first_name }}</option>
-                        {% endfor %}
-                    </select></label>
-                    <label>图书
-                    <select class="book" style="width:100px;" required>
-                        {% for storage in storage_lst %}
-                            <option value="{{ storage.id }}">{{ storage.book }}</option>
-                        {% endfor %}
-                    </select></label><br>
-                    <input type="submit" value="提交" id="history_submit"/>
+                    <h2>图书和用户管理</h2>
+                    <div><strong>新书入库</strong></div>
+                    <div class="book_new">
+                        图书 <input type="text" name="book" id="book_in"/><br>
+                        <input type="submit" value="提交" id="book_submit"/>
+                    </div>
+                    <div><strong>新用户添加</strong></div>
+                    <div class="user_new">
+                        邮箱 <input type="text" name="email" id="email_in"/><br>
+                        姓名 <input type="text" name="name" id="name_in"/><br>
+                        <input type="submit" value="提交" id="user_submit"/>
+                    </div>
                 </div>
+                <div class="actions">
+                    图书借阅与归还审批
                 </div>
                 <div class="results">
                     <table id="result_list">
@@ -75,7 +74,7 @@
                     </thead>
                     <tbody id="results">
                     {% for history in history_lst %}
-                        <tr class="row1" id="{{ history.id }}">
+                        <tr class="row1">
                             <th class="date">{{ history.borrow_date }}</th>
                             <td class="book">{{ history.book }}</td>
                             <td class="user">{{ history.user.first_name }}</td>
@@ -85,8 +84,8 @@
                             <td class="status">归还</td>
                             {% endif %}
                             <td class="action">
-                                <button class="bt-yn" name="yes">同意</button>
-                                <button class="bt-yn" name="no">不同意</button>
+                                <button class="button4" value="{{ history.id }}">yes</button>
+                                <button class="button4" value="{{ history.id }}">no</button>
                             </td>
                         </tr>
                     {% endfor %}
