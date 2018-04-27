@@ -246,7 +246,7 @@ def history_detail(request, pk):
                 if delay and status_old == 2:
                     history_delay = history.delay
                     history.delay = int(history_delay) ^ 1
-                elif status_old == 2:
+                elif status_old in [2, 3]:
                     history.status = 4
         history.save()
         serializers = HistorySerializer(history)

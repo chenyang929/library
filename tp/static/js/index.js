@@ -1,10 +1,5 @@
 $(document).ready(function () {
-    let str = $("#tr71 th.book").text();
-    let s = "业";
-    let reg = new RegExp("(" + s + ")", "i");
-    let newstr = str.replace(reg, "<span style='color:red'>$1</span>");
-    $("#tr71 th.book").html(newstr);
-
+    //选择图书状态和分页大小
     let select = $("#select");
     let per = $("#per");
     select.change(function () {
@@ -13,6 +8,8 @@ $(document).ready(function () {
     per.change(function () {
         selectStorage(select.val(), per.val());
     });
+
+    //搜索图书
     $("#book-search").bind('keypress', function (event) {
         let search_var = $(this).val();
         if (search_var.length!=0 && event.keyCode == 13 ) {
@@ -20,27 +17,39 @@ $(document).ready(function () {
             $(this).val("")
         }
      });
-    $(".button1").click(function () {
+
+    //借阅图书
+    $(".bt-storage").click(function () {
+        btStorageClick($(this))
+    });
+
+    //翻页
+    $(".bt-page").click(function () {
         goPage($(this).val());
     });
 
-    $(".button2").click(function () {
-        let storage_id = $(this).val();
-        let book = $("#"+ storage_id).text();
-        if(confirm(book + "？借阅")){
-            historyList('POST', storage_id)
+    //归还图书
+    $(".bt-history").click(function () {
+        let book = $(this).closest("tr").find("td.history_book").text();
+        let historyId = $(this).val();
+        if (confirm(book + "? 归还")){
+            historyDetailPost(historyId, $(this));
         }
-    });
-    // $(".button3").click(function () {
-    //     if(confirm("确认归还该书1")){
-    //         backBook($(this).val())
-    //     }
-    // });
+    })
+
+    // let str = $("#tr71 th.book").text();
+    // let s = "业";
+    // let reg = new RegExp("(" + s + ")", "i");
+    // let newstr = str.replace(reg, "<span style='color:red'>$1</span>");
+    // $("#tr71 th.book").html(newstr);
 });
 
-function goPage(url) {
-    $.get(url, storageSuccess)
-
+function btStorageClick(ele) {
+    let book = ele.closest("tr").find("th.book").text();
+    let storageId = ele.closest("tr").attr("id");
+    if(confirm(book + "？借阅")){
+        historyListPost(storageId)
+    }
 }
 
 function selectStorage(remain, per) {
@@ -50,7 +59,15 @@ function selectStorage(remain, per) {
 
 function searchStorage(book, per) {
     let url = '/library/api/storage';
-    $.get(url, {book: book, per: per}, storageSuccess)
+    $.get(url, {book: book, per: per}, storageSuccess);
+    let str = $("#results").html();
+    let reg = new RegExp("(" + book + ")", "i");
+    let newstr = str.replace(reg, "<span style='color:red'>$1</span>");
+    $("#results").html(newstr);
+}
+
+function goPage(url) {
+    $.get(url, storageSuccess)
 }
 
 function storageSuccess(response) {
@@ -62,8 +79,8 @@ function storageSuccess(response) {
     let previous_page = json.previous_page;
     let results = json.results;
     let thisPage = '<span class="this-page">' + '第' + page + '页</span> ';
-    let previousPage = '<button class="button1" value="' + previous_page +'"' + '>' + '上一页</button> ';
-    let nextPage = '<button class="button1" value="' + next_page + '"' + '>' + '下一页</button> ';
+    let previousPage = '<button class="bt-page" value="' + previous_page +'"' + '>' + '上一页</button> ';
+    let nextPage = '<button class="bt-page" value="' + next_page + '"' + '>' + '下一页</button> ';
     let totalPage = '<span class="total_page"> 共 ' + total_page + ' 页 </span>';
     let count_t = '<span class="count">' + count + '条结果</span>';
     if (previous_page == null) {
@@ -76,14 +93,14 @@ function storageSuccess(response) {
     if (results.length > 0) {
         $.each(results, function (index) {
             let {id, book, inventory, remain} = results[index];
-            let action = '<button class="button2" value="' + id + '"' + '>' + '借阅' + '</button>';
+            let action = '<button class="bt-storage">' + '借阅' + '</button>';
             let str = '在库';
             if (remain == 0) {
                 str = '出库';
                 action = ''
             }
-            row += '<tr class="row1">' +
-                '<th class="book" id="' + id + '">' + book + '</th>' +
+            row += '<tr class="row1" id="' + id + '">' +
+                '<th class="book">' + book + '</th>' +
                 '<td class="inventory">' + inventory + '</td>' +
                 '<td class="remain">' + remain + '</td>' +
                 '<td class="status">' + str + '</td>' +
@@ -100,124 +117,105 @@ function storageSuccess(response) {
 }
 
 function storageAfterLoad() {
-    $('.button1').bind(
+    $('.bt-page').bind(
         "click",
         function () {
             goPage($(this).val())
     });
+    $('.bt-storage').bind(
+        "click",
+        function () {
+            btStorageClick($(this))
+        }
+    )
 }
 
-function historyList(type, storageId) {
+function historyListPost(storageId) {
     $.ajax({
         url: '/library/api/history/',
         data: {"storage_id": storageId},
-        type: type,
+        type: 'POST',
         //cache: false,
         dataType: 'json',
         xhrFields: {
-             withCredentials: true
+            withCredentials: true
         },
         crossDomain: true,
         beforeSend: loadFunction,
         error: errorFunction,
         success: successFunction
     });
+
     function loadFunction(xhr) {
         xhr.setRequestHeader("X-CSRFToken", $.cookie('csrftoken'));
     }
+
     function errorFunction() {
         alert("请求失败");
     }
+
     function successFunction(response) {
         let json = eval(response);
         let msg = json.info;
-        if (type == 'POST') {
-        //storageList($("#select").val(), m);
-            if (msg == 'success') {
-                //$("#tr").hide();
-                $("#tr" + storageId + " td.status").text("出库");
-                $("#tr" + storageId + " td.action").text("");
-                historyList('GET', 1)
-            } else {
-                alert(msg)
-            }
-
-        } else if (type == 'GET') {
-            let results = json.history;
-            let row = '';
-            if (results != null) {
-                $.each(results, function (index) {
-                    let {id, book, borrow_date, status} = results[index];
-                    let str = '借阅中';
-                    let action = '<button class="button3" value="' + id + '">' + '归还</button>';
-                    switch (status) {
-                        case 0:
-                            str = '借阅不通过';
-                            action = '';
-                            break;
-                        case 1:
-                            str = '借阅审批中';
-                            action = '';
-                            break;
-                        case 3:
-                            str = '归还不通过';
-                            break;
-                        case 4:
-                            str = '归还审批中';
-                            action = '';
-                            break;
-                        case 5:
-                            str = '已归还';
-                            action = '';
-                            break;
-                    }
-                    row += '<tr class="row2">' +
-                        '<th class="history_date">' + borrow_date + '</th>' +
-                        '<td class="history_book">' + book + '</td>' +
-                        '<td class="history_status">' + str + '</td>' +
-                        '<td class="history_action">' + action + '</td>' +
-                        '</tr>'
-                });
-                $("#history").html(row);
-            }
-        }
-        if (type == 'GET') {
-            historyListAfterLoad();
+        if (msg == 'success') {
+            $("#" + storageId + " td.status").text("出库");
+            $("#" + storageId + " td.action").text("");
+            let book = $("#" + storageId + " th.book").text();
+            historyShow(book);
+        } else {
+            alert(msg)
         }
     }
 }
 
-function historyListAfterLoad() {
-    $('.button3').bind(
-        "click",
-        function () {
-            if(confirm("确认归还该书2")){
-            backBook($(this).val())
-        }
-    });
+function historyShow(book) {
+    let myDate = new Date();
+    let year = myDate.getFullYear();
+    let month = myDate.getMonth() + 1;
+    let day = myDate.getDate();
+    let row = '<tr class="row2">' +
+              '<th class="history_date">' + year + '年' + month + '月' + day  + '日' + '</th>' +
+              '<td class="history_book">' + book + '</td>' +
+              '<td class="history_status">' + '借阅审核中' + '</td>' +
+              '<td class="history_action"></td></tr>';
+    $("#history").append(row);
 }
 
-function backBook(historyId) {
+function historyDetailPost(historyId, ele) {
     $.ajax({
-        url: '/library/history/' + historyId,
+        url: '/library/api/history/' + historyId,
         type: 'POST',
-        cache: false,
+        //cache: false,
         dataType: 'json',
         xhrFields: {
-             withCredentials: true
+            withCredentials: true
         },
         crossDomain: true,
         beforeSend: loadFunction,
         error: errorFunction,
         success: successFunction
     });
+
     function loadFunction(xhr) {
         xhr.setRequestHeader("X-CSRFToken", $.cookie('csrftoken'));
     }
+
     function errorFunction() {
         alert("请求失败");
     }
+
     function successFunction(response) {
-        historyList('GET', 1);
+        let json = eval(response);
+        let msg = json.info;
+        if (msg == 'success') {
+            let status = ele.closest("tr").find("td.history_status").text();
+            if (status == '借阅中' || status == '归还不通过') {
+                ele.closest("tr").find("td.history_status").text("归还审核中");
+                ele.closest("tr").find("td.history_action").text("")
+            }
+        } else {
+            alert(msg)
+        }
     }
 }
+

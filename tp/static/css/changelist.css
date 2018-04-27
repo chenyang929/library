@@ -31,7 +31,7 @@
 
 }
 
-.button1 {
+.bt-page {
     background-color: #008CBA;
     font-size: 15px;
     border-radius: 2px;
@@ -39,7 +39,7 @@
     border: 0;
 }
 
-.button2 {
+.bt-storage {
     background-color: #4CAF50;
     font-size: 15px;
     border-radius: 2px;
@@ -47,7 +47,7 @@
     border: 0;
 }
 
-.button3 {
+.bt-history {
     background-color: #FF3300;
     font-size: 15px;
     border-radius: 2px;
