@@ -191,7 +191,7 @@ def history_list(request):
             else:
                 history_lst = History.objects.all()
         else:
-            history_lst = History.objects.filter(user=request.user.first_name)
+            history_lst = History.objects.filter(user_id=request.user.id)
         mp = get_format_results(query_str, page, per, history_lst, HistorySerializer, request.META.get('PATH_INFO'))
         return Response(mp)
     elif request.method == 'POST':
@@ -211,16 +211,19 @@ def history_list(request):
                 return Response({"info": "用户不存在"})
             storage.remain = remain - 1
             storage.save()
-            new_history = History.objects.create(book=storage.book, user=user.first_name, status=2)
+            new_history = History.objects.create(book=storage.book, book_id=storage.id,
+                                                 user=user.first_name, user_id=user.id, status=2)
             serializers = HistorySerializer(new_history)
             return Response({"info": "success", "results": [serializers.data]}, status=201)
         else:
-            my_history_list = History.objects.filter(user=request.user.first_name, status__in=[1, 2, 3, 4])
+            my_history_list = History.objects.filter(user_id=request.user.id,
+                                                     status__in=[1, 2, 3, 4])
             if len(my_history_list) >= 2:
                 return Response({"info": "当前已借阅两本图书!"})
             storage.remain = remain - 1
             storage.save()
-            new_history = History.objects.create(book=storage.book, user=request.user.first_name)
+            new_history = History.objects.create(book=storage.book, book_id=storage.id,
+                                                 user=request.user.first_name, user_id=request.user.id)
             serializers = HistorySerializer(new_history)
             return Response({"info": "success", "results": [serializers.data]}, status=201)
 
@@ -242,13 +245,13 @@ def history_detail(request, pk):
                     history.status += 1
                     if status_old == 4:   # 还书后把库存加1
                         history.back_date = datetime.date.today()
-                        storage = Storage.objects.get(book=history.book)
+                        storage = Storage.objects.get(pk=history.book_id)
                         storage.remain += 1
                         storage.save()
                 elif msg and msg == 'no':
                     history.status -= 1
                     if status_old == 1:   # 借阅不同意后把库存加1
-                        storage = Storage.objects.get(book=history.book)
+                        storage = Storage.objects.get(pk=history.book_id)
                         storage.remain += 1
                         storage.save()
         elif history.user == request.user:

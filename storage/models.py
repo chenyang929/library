@@ -6,7 +6,6 @@ class Storage(models.Model):
     inventory = models.SmallIntegerField(default=1)
     remain = models.SmallIntegerField(default=1)
     add_date = models.DateField(auto_now_add=True)
-    is_delete = models.SmallIntegerField(default=0)
 
     class Meta:
         ordering = ['-id']
