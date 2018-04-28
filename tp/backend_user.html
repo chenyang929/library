@@ -24,7 +24,8 @@
     </div>
     <!-- END Header -->
 <div class="bread">
-<div><a href="{% url 'backend:index' %}">借阅管理</a></div>
+<div><a href="{% url 'backend:index' %}">审核中心</a></div>
+<div class="history"><a href="{% url 'backend:backend_history' %}">借阅管理</a></div>
 <div class="storage"><a href="{% url 'backend:backend_storage' %}">图书管理</a></div>
 <div class="user active">用户管理</div>
 <div class="buy"><a href="{% url 'backend:backend_buy' %}">申购管理</a></div>
@@ -40,6 +41,19 @@
                         姓名 <input type="text" name="name" id="name_in"/><br>
                         <input type="submit" value="提交" id="user_submit"/>
                     </div>
+                </div>
+                <div class="actions search">
+                    <label>每页显示
+                    <select name="action" id="per" required>
+                        <option value="15">15</option>
+                        <option value="20">20</option>
+                        <option value="30">30</option>
+                    </select></label>
+                </div>
+                <div class="search">
+                    <label>
+                        <input type="text" name="search" id="book-search" placeholder="用户搜索"/>
+                    </label>
                 </div>
                 <div class="results">
                     <table id="result_list">
@@ -61,12 +75,18 @@
                         <tr class="row1" id="{{ user.id }}">
                             <th class="first_name">{{ user.first_name }}</th>
                             <td class="email">{{ user.email }}</td>
-                            <td class="action"><button class="bt-modify">编辑</button></td>
+                            <td class="action"><button class="bt-modify-user">编辑</button></td>
                         </tr>
                     {% endfor %}
                     </tbody>
                     </table>
                 </div>
+                <p id="paginator">
+                    <span class="this-page">第1页</span>
+                    <button class="bt-page" value="{{ next_page }}">下一页</button>
+                    <span class="total_page"> 共 {{ total_page }} 页 </span>
+                    <span class="count"> {{ user_lst.count }} 条结果</span>
+                </p>
             </div>
         </div>
     </div>

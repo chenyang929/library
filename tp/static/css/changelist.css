@@ -39,7 +39,7 @@
     border: 0;
 }
 
-.bt-storage , .bt-history-add, .bt-modify, .bt-yn{
+.bt-storage , .bt-history-add, .bt-modify-history, .bt-modify-storage, .bt-modify-user, .bt-yn{
     background-color: #4CAF50;
     font-size: 15px;
     border-radius: 2px;

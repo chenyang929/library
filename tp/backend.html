@@ -24,7 +24,8 @@
     </div>
     <!-- END Header -->
 <div class="bread">
-<div class="active">借阅管理</div>
+<div class="active">审核中心</div>
+<div class="history"><a href="{% url 'backend:backend_history' %}">借阅管理</a></div>
 <div class="storage"><a href="{% url 'backend:backend_storage' %}">图书管理</a></div>
 <div class="user"><a href="{% url 'backend:backend_user' %}">用户管理</a></div>
 <div class="buy"><a href="{% url 'backend:backend_buy' %}">申购管理</a></div>
@@ -33,24 +34,6 @@
     <div id="content" class="flex">
         <div id="content-main">
             <div class="module filtered" id="changelist">
-                <div id="changelist-check">
-                    <h2>新增借阅</h2>
-                    <div class="history_new" style="margin-top: 10px">
-                    <label>用户
-                    <select class="user" style="width:100px;" required>
-                        {% for user in user_lst %}
-                            <option value="{{ user.id }}">{{ user.first_name }}</option>
-                        {% endfor %}
-                    </select></label>
-                    <label>图书
-                    <select class="book" style="width:100px;" required>
-                        {% for storage in storage_lst %}
-                            <option value="{{ storage.id }}">{{ storage.book }}</option>
-                        {% endfor %}
-                    </select></label><br>
-                    <input type="submit" value="提交" id="history_submit"/>
-                </div>
-                </div>
                 <div class="results">
                     <table id="result_list">
                     <thead>
@@ -78,7 +61,7 @@
                         <tr class="row1" id="{{ history.id }}">
                             <th class="date">{{ history.borrow_date }}</th>
                             <td class="book">{{ history.book }}</td>
-                            <td class="user">{{ history.user.first_name }}</td>
+                            <td class="user">{{ history.user }}</td>
                             {% if history.status == 1 %}
                             <td class="status">借阅</td>
                             {% else %}

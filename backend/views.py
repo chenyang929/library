@@ -3,7 +3,6 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from storage.models import Storage
 from history.models import History
-from django.http.response import HttpResponse
 
 
 @login_required(login_url='login:login')
@@ -15,15 +14,35 @@ def index(request):
     return render(request, "backend.html", context)
 
 
+def backend_history(request):
+    history_lst = History.objects.all().order_by('-id')
+    count = history_lst.count()
+    total_page = int(count / 15)
+    if int(count % 15) != 0:
+        total_page += 1
+    context = {"history_lst": history_lst, "total_page": total_page}
+    if total_page > 1:
+        context.update({"next_page": '/library/api/history?page=2'})
+    return render(request, "backend_history.html", context)
+
+
 def backend_storage(request):
     storage_lst = Storage.objects.all()
-    context = {"storage_lst": storage_lst}
+    count = storage_lst.count()
+    total_page = int(count / 15)
+    if int(count % 15) != 0:
+        total_page += 1
+    context = {"storage_lst": storage_lst[:15], "total_page": total_page, "next_page": '/library/api/storage?page=2'}
     return render(request, 'backend_storage.html', context)
 
 
 def backend_user(request):
     user_lst = User.objects.filter(is_staff=0).order_by('-id')
-    context = {"user_lst": user_lst}
+    count = user_lst.count()
+    total_page = int(count / 15)
+    if int(count % 15) != 0:
+        total_page += 1
+    context = {"user_lst": user_lst[:15], "total_page": total_page, "next_page": '/library/api/user?page=2'}
     return render(request, 'backend_user.html', context)
 
 

@@ -688,7 +688,7 @@ div.bread div {
     display: inline;
 }
 
-div.bread div.storage, div.bread div.user, div.bread div.buy{
+div.bread div.history, div.bread div.storage, div.bread div.user, div.bread div.buy {
     margin-left: 50px;
 }
 

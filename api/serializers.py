@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
 from storage.models import Storage
+from history.models import History
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -15,11 +16,7 @@ class StorageSerializer(serializers.ModelSerializer):
         fields = ('id', 'book', 'inventory', 'remain')
 
 
-class HistorySerializer(serializers.Serializer):
-    id = serializers.IntegerField()
-    book = serializers.CharField()
-    user = serializers.CharField()
-    borrow_date = serializers.DateField()
-    back_date = serializers.DateField()
-    status = serializers.IntegerField()
-    delay = serializers.IntegerField()
+class HistorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = History
+        fields = ('id', 'book', 'user', 'status', 'delay', 'borrow_date', 'back_date')

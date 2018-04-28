@@ -1,0 +1,158 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="zh-hans" >
+<head>
+<title>大数据部门图书借阅系统--后台管理</title>
+<link rel="stylesheet" type="text/css" href="{% static 'css/base.css' %}" />
+<link rel="stylesheet" type="text/css" href="{% static 'css/changelist.css' %}" />
+<meta charset="utf-8">
+<meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="robots" content="NONE,NOARCHIVE" />
+</head>
+<body class=" app-book model-book change-list" data-admin-utc-offset="28800">
+<!-- Container -->
+<div id="container">
+    <!-- Header -->
+    <div id="header">
+        <div id="branding">
+        <h1 id="site-name"><a href="/library/">大数据部门图书借阅系统--<strong>后台管理</strong></a></h1>
+        </div>
+        <div id="user-tools">
+                欢迎，管理员 /
+                <a href="{% url 'login:logout' %}">注销</a>
+        </div>
+    </div>
+    <!-- END Header -->
+<div class="bread">
+<div ><a href="{% url 'backend:index' %}">审核中心</a></div>
+<div class="history active">借阅管理</div>
+<div class="storage"><a href="{% url 'backend:backend_storage' %}">图书管理</a></div>
+<div class="user"><a href="{% url 'backend:backend_user' %}">用户管理</a></div>
+<div class="buy"><a href="{% url 'backend:backend_buy' %}">申购管理</a></div>
+</div>
+    <!-- Content -->
+    <div id="content" class="flex">
+        <div id="content-main">
+            <div class="module filtered" id="changelist">
+                <div id="changelist-check">
+                    <h2>新增借阅</h2>
+                    <div class="history_new" style="margin-top: 10px">
+                    <label>用户
+                    <select class="user" style="width:100px;" required>
+                        {% for user in user_lst %}
+                            <option value="{{ user.id }}">{{ user.first_name }}</option>
+                        {% endfor %}
+                    </select></label>
+                    <label>图书
+                    <select class="book" style="width:100px;" required>
+                        {% for storage in storage_lst %}
+                            <option value="{{ storage.id }}">{{ storage.book }}</option>
+                        {% endfor %}
+                    </select></label><br>
+                    <input type="submit" value="提交" id="history_submit"/>
+                    </div>
+                </div>
+
+                <div class="actions search">
+                    <label>状态筛选
+                    <select name="action" id="select" required>
+                        <option value="2">全部</option>
+                        <option value="1">借阅中</option>
+                        <option value="1">已归还</option>
+                        <option value="1">借阅审核中</option>
+                        <option value="1">归还审核中</option>
+                        <option value="0">借阅不通过</option>
+                        <option value="0">归还不通过</option>
+                    </select></label>
+                </div>
+                <div class="actions search">
+                    <label>每页显示
+                    <select name="action" id="per" required>
+                        <option value="15">15</option>
+                        <option value="20">20</option>
+                        <option value="30">30</option>
+                    </select></label>
+                </div>
+                <div class="search">
+                    <label>
+                        <select name="action" id="per" required>
+                        <option value="15">用户</option>
+                        <option value="20">图书</option>
+                        </select>
+                        <input type="text" name="search" id="book-search" placeholder="搜索"/>
+                    </label>
+                </div>
+
+                <div class="results">
+                    <table id="result_list">
+                    <thead>
+                        <tr>
+                            <th>
+                               <div class="result_col">日期</div>
+                            </th>
+                            <th>
+                               <div class="result_col">书名</div>
+                            </th>
+                            <th>
+                               <div class="result_col">用户</div>
+                            </th>
+                            <th>
+                               <div class="result_col">类型</div>
+                            </th>
+                            <th>
+                               <div class="result_col">操作</div>
+                            </th>
+
+                        </tr>
+                    </thead>
+                    <tbody id="results">
+                    {% for history in history_lst %}
+                        <tr class="row1" id="{{ history.id }}">
+                            <th class="date">{{ history.borrow_date }}</th>
+                            <td class="book">{{ history.book }}</td>
+                            <td class="user">{{ history.user }}</td>
+                            {% if history.status == 0 %}
+                            <td class="history_status">借阅不通过</td>
+                            {% elif history.status == 1 %}
+                            <td class="history_status">借阅审核中</td>
+                            {% elif history.status == 2 %}
+                            <td class="history_status">借阅中</td>
+                            {% elif history.status == 3 %}
+                            <td class="history_status">归还不通过</td>
+                            {% elif history.status == 4 %}
+                            <td class="history_status">归还审核中</td>
+                            {% elif history.status == 5 %}
+                            <td class="history_status">已归还</td>
+                            {% endif %}
+                            <td class="action">
+                                <button class="bt-modify-history">编辑</button>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                    </table>
+                </div>
+                <p id="paginator">
+                    {% if total_page == 0  %}
+                    <span class="count"> 0 条结果</span>
+                    {% else%}
+                    <span class="this-page">第1页</span>
+                    {% if next_page %}
+                    <button class="bt-page" value="{{ next_page }}">下一页</button>
+                    {% endif %}
+                    <span class="total_page"> 共 {{ total_page }} 页 </span>
+                    <span class="count"> {{ history_lst.count }} 条结果</span>
+                    {% endif %}
+                </p>
+            </div>
+        </div>
+    </div>
+    <!-- END Content -->
+    <div id="footer"></div>
+</div>
+<!-- END Container -->
+<script src="{% static 'js/jquery-3.3.1.min.js' %}"></script>
+<script src="{% static 'js/jquery.cookie.js' %}"></script>
+<script src="{% static 'js/backend.js' %}"></script>
+</body>
+</html>

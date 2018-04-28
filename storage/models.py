@@ -9,7 +9,6 @@ class Storage(models.Model):
     is_delete = models.SmallIntegerField(default=0)
 
     class Meta:
-        #verbose_name = '图书库存'
         ordering = ['-id']
 
     def __str__(self):
