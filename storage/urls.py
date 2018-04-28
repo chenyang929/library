@@ -1,9 +1,9 @@
-from django.urls import re_path
+from django.urls import path, re_path
 from . import views
 
 app_name = 'storage'
 urlpatterns = [
-    re_path(r'^$', views.storage_list, name='storage_list'),
-    re_path(r'(?P<pk>[0-9]+)$', views.storage_detail, name='storage_detail'),
-    #re_path(r'(?P<pk>[0-9]+)/$', views.storage_detail, name='storage_detail'),
+    path('user_add_api', views.user_add_api, name='user_add_api'),   # 添加用户
+    path('center', views.user_center, name='user_center'),
+    re_path(r'^$', views.index, name='index'),
 ]

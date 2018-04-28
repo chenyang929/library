@@ -32,7 +32,6 @@ ALLOWED_HOSTS = ['127.0.0.1', '192.168.38.8']
 
 INSTALLED_APPS = [
     'rest_framework',
-    'user',
     'login',
     'storage',
     'history',
