@@ -56,13 +56,13 @@
                 <div class="actions search">
                     <label>状态筛选
                     <select name="action" id="select" required>
-                        <option value="2">全部</option>
-                        <option value="1">借阅中</option>
-                        <option value="1">已归还</option>
+                        <option value="9">全部</option>
+                        <option value="2">借阅中</option>
+                        <option value="5">已归还</option>
                         <option value="1">借阅审核中</option>
-                        <option value="1">归还审核中</option>
+                        <option value="4">归还审核中</option>
                         <option value="0">借阅不通过</option>
-                        <option value="0">归还不通过</option>
+                        <option value="3">归还不通过</option>
                     </select></label>
                 </div>
                 <div class="actions search">
@@ -75,11 +75,11 @@
                 </div>
                 <div class="search">
                     <label>
-                        <select name="action" id="per" required>
-                        <option value="15">用户</option>
-                        <option value="20">图书</option>
+                        <select name="action" id="choice-search" required>
+                        <option value="0">用户</option>
+                        <option value="1">图书</option>
                         </select>
-                        <input type="text" name="search" id="book-search" placeholder="搜索"/>
+                        <input type="text" name="search" id="history-search" placeholder="搜索"/>
                     </label>
                 </div>
 
@@ -88,41 +88,52 @@
                     <thead>
                         <tr>
                             <th>
-                               <div class="result_col">日期</div>
-                            </th>
-                            <th>
                                <div class="result_col">书名</div>
                             </th>
                             <th>
                                <div class="result_col">用户</div>
                             </th>
                             <th>
-                               <div class="result_col">类型</div>
+                               <div class="result_col">借阅日期</div>
+                            </th>
+                            <th>
+                               <div class="result_col">归还截止</div>
+                            </th>
+                            <th>
+                               <div class="result_col">状态</div>
+                            </th>
+                            <th>
+                               <div class="result_col">是否续借</div>
                             </th>
                             <th>
                                <div class="result_col">操作</div>
                             </th>
-
                         </tr>
                     </thead>
                     <tbody id="results">
                     {% for history in history_lst %}
                         <tr class="row1" id="{{ history.id }}">
-                            <th class="date">{{ history.borrow_date }}</th>
-                            <td class="book">{{ history.book }}</td>
+                            <th class="book">{{ history.book }}</th>
                             <td class="user">{{ history.user }}</td>
+                            <td class="borrow_date">{{ history.borrow_date }}</td>
+                            <td class="back_date">{{ history.back_date }}</td>
                             {% if history.status == 0 %}
-                            <td class="history_status">借阅不通过</td>
+                            <td class="status">借阅不通过</td>
                             {% elif history.status == 1 %}
-                            <td class="history_status">借阅审核中</td>
+                            <td class="status">借阅审核中</td>
                             {% elif history.status == 2 %}
-                            <td class="history_status">借阅中</td>
+                            <td class="status">借阅中</td>
                             {% elif history.status == 3 %}
-                            <td class="history_status">归还不通过</td>
+                            <td class="status">归还不通过</td>
                             {% elif history.status == 4 %}
-                            <td class="history_status">归还审核中</td>
+                            <td class="status">归还审核中</td>
                             {% elif history.status == 5 %}
-                            <td class="history_status">已归还</td>
+                            <td class="status">已归还</td>
+                            {% endif %}
+                            {% if history.delay == 0 %}
+                            <th class="delay">否</th>
+                            {% else %}
+                            <th class="delay">是</th>
                             {% endif %}
                             <td class="action">
                                 <button class="bt-modify-history">编辑</button>
@@ -153,6 +164,6 @@
 <!-- END Container -->
 <script src="{% static 'js/jquery-3.3.1.min.js' %}"></script>
 <script src="{% static 'js/jquery.cookie.js' %}"></script>
-<script src="{% static 'js/backend.js' %}"></script>
+<script src="{% static 'js/backend_history.js' %}"></script>
 </body>
 </html>

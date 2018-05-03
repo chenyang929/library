@@ -37,10 +37,13 @@
                             <thead>
                                 <tr>
                                     <th>
-                                        <div class="history_col">日期</div>
+                                        <div class="history_col">书名</div>
                                     </th>
                                     <th>
-                                        <div class="history_col">书名</div>
+                                        <div class="history_col">借阅日期</div>
+                                    </th>
+                                    <th>
+                                        <div class="history_col">归还截止</div>
                                     </th>
                                     <th>
                                         <div class="history_col">状态</div>
@@ -53,8 +56,9 @@
                             <tbody id="history">
                             {% for history in history_lst %}
                                 <tr class="row2">
-                                    <th class="history_date">{{ history.borrow_date }}</th>
-                                    <td class="history_book">{{ history.book }}</td>
+                                    <th class="history_book">{{ history.book }}</th>
+                                    <td class="history_borrow_date">{{ history.borrow_date }}</td>
+                                    <td class="history_back_date">{{ history.back_date }}</td>
                                     {% if history.status == 0 %}
                                     <td class="history_status">借阅不通过</td>
                                     <td class="history_action"></td>
@@ -87,7 +91,7 @@
                 <div class="actions search">
                     <label>状态筛选
                     <select name="action" id="select" required>
-                        <option value="2">全部</option>
+                        <option value="9">全部</option>
                         <option value="1">在库</option>
                         <option value="0">出库</option>
                     </select></label>

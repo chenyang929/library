@@ -56,7 +56,7 @@ def user_detail(request, pk):
     if request.method == 'GET':
         serializers = UserSerializer(user)
         return Response({"info": "success", "results": [serializers.data]})
-    elif request.method == 'POST':   # 修改密码
+    elif request.method == 'POST':
         if request.user.is_superuser:
             user_name = request.POST.get('user_name')
             first_name = request.POST.get('first_name')
@@ -182,12 +182,15 @@ def history_list(request):
         if request.user.is_superuser:
             user_str = re.findall(r'user=(.+)&?', query_str)
             book_str = re.findall(r'book=(.+)&?', query_str)
+            status_str = re.findall(r'status=(\d+)', query_str)
             if user_str:
                 user_str = parse.unquote(user_str[0].split('&')[0])
                 history_lst = History.objects.filter(user__icontains=user_str)
             elif book_str:
                 book_str = parse.unquote(book_str[0].split('&')[0])
                 history_lst = History.objects.filter(book__icontains=book_str)
+            elif status_str and int(status_str[0]) in list(range(6)):
+                history_lst = History.objects.filter(status=int(status_str[0]))
             else:
                 history_lst = History.objects.all()
         else:
@@ -211,8 +214,10 @@ def history_list(request):
                 return Response({"info": "用户不存在"})
             storage.remain = remain - 1
             storage.save()
+            back_date = datetime.date.today() + datetime.timedelta(days=30)
             new_history = History.objects.create(book=storage.book, book_id=storage.id,
-                                                 user=user.first_name, user_id=user.id, status=2)
+                                                 user=user.first_name, user_id=user.id,
+                                                 back_date=back_date, status=2)
             serializers = HistorySerializer(new_history)
             return Response({"info": "success", "results": [serializers.data]}, status=201)
         else:
@@ -243,6 +248,7 @@ def history_detail(request, pk):
                 msg = request.POST.get("msg")
                 if msg and msg == 'yes':
                     history.status += 1
+                    history.back_date = datetime.date.today() + datetime.timedelta(days=30)
                     if status_old == 4:   # 还书后把库存加1
                         history.back_date = datetime.date.today()
                         storage = Storage.objects.get(pk=history.book_id)
@@ -254,7 +260,7 @@ def history_detail(request, pk):
                         storage = Storage.objects.get(pk=history.book_id)
                         storage.remain += 1
                         storage.save()
-        elif history.user == request.user:
+        elif history.user_id == request.user.pk:
                 delay = request.POST.get('delay')   # 续借
                 if delay and status_old == 2:
                     history_delay = history.delay
