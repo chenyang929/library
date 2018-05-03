@@ -3,9 +3,18 @@
 
 /*自定义*/
 
-.row1:hover {
-    background-color: #CCFFFF;
+table tr:nth-child(odd) {
+    background: #FFFAFA;
 }
+
+table tr:nth-child(even) {
+    background: #FFFFF0 ;
+}
+
+.row1:hover, .row2:hover {
+    background-color: #AFEEEE;
+}
+
 .search {
     display: inline;
 }

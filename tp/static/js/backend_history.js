@@ -34,11 +34,24 @@ $(document).ready(function () {
     });
 
     //新增借阅
+    $("#datetimepicker").datetimepicker({
+        timepicker: false,
+        format: 'Y-m-d',
+    });
+    $.datetimepicker.setLocale('zh');
+
     $("#history_submit").click(function () {
         let userId = $("#changelist-check select.user").val();
         let storageId = $("#changelist-check select.book").val();
-        historyNew(userId, storageId);
+        let borrowDate = $("#datetimepicker").val();
+        if (borrowDate.length>0) {
+            historyNew(userId, storageId, borrowDate);
+        } else {
+            alert('请选择日期')
+        }
+
     });
+
 });
 
 function goPage(url) {
@@ -134,11 +147,11 @@ function historyAfterLoad() {
     )
 }
 
-function historyNew(userID, storageId) {
+function historyNew(userID, storageId, borrowDate) {
     $.ajax({
         url: '/library/api/history/',
         type: 'POST',
-        data: {"user_id": userID, "storage_id": storageId},
+        data: {"user_id": userID, "storage_id": storageId, "borrow_date": borrowDate},
         //cache: false,
         dataType: 'json',
         xhrFields: {

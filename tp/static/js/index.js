@@ -36,12 +36,6 @@ $(document).ready(function () {
             historyDetailPost(historyId, $(this));
         }
     })
-
-    // let str = $("#tr71 th.book").text();
-    // let s = "业";
-    // let reg = new RegExp("(" + s + ")", "i");
-    // let newstr = str.replace(reg, "<span style='color:red'>$1</span>");
-    // $("#tr71 th.book").html(newstr);
 });
 
 function btStorageClick(ele) {
@@ -89,7 +83,7 @@ function storageSuccess(response) {
     if (results.length > 0) {
         $.each(results, function (index) {
             let {id, book, inventory, remain} = results[index];
-            let action = '<button class="bt-storage">' + '借阅' + '</button>';
+            let action = '<button class="bt-storage" title="点击借阅">' + '借阅' + '</button>';
             let str = '在库';
             if (remain == 0) {
                 str = '出库';

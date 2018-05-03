@@ -5,6 +5,7 @@
 <title>大数据部门图书借阅系统--后台管理</title>
 <link rel="stylesheet" type="text/css" href="{% static 'css/base.css' %}" />
 <link rel="stylesheet" type="text/css" href="{% static 'css/changelist.css' %}" />
+<link rel="stylesheet" type="text/css" href="{% static 'css/jquery.datetimepicker.min.css' %}" />
 <meta charset="utf-8">
 <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <meta name="robots" content="NONE,NOARCHIVE" />
@@ -49,6 +50,9 @@
                             <option value="{{ storage.id }}">{{ storage.book }}</option>
                         {% endfor %}
                     </select></label><br>
+                    <label>日期
+                        <input id="datetimepicker" type="text" />
+                    </label>
                     <input type="submit" value="提交" id="history_submit"/>
                     </div>
                 </div>
@@ -116,7 +120,11 @@
                             <th class="book">{{ history.book }}</th>
                             <td class="user">{{ history.user }}</td>
                             <td class="borrow_date">{{ history.borrow_date }}</td>
+                            {% if history.back_date %}
                             <td class="back_date">{{ history.back_date }}</td>
+                            {% else %}
+                            <td class="back_date"></td>
+                            {% endif %}
                             {% if history.status == 0 %}
                             <td class="status">借阅不通过</td>
                             {% elif history.status == 1 %}
@@ -165,5 +173,7 @@
 <script src="{% static 'js/jquery-3.3.1.min.js' %}"></script>
 <script src="{% static 'js/jquery.cookie.js' %}"></script>
 <script src="{% static 'js/backend_history.js' %}"></script>
+<script src="{% static 'js/jquery.datetimepicker.full.min.js' %}"></script>
+
 </body>
 </html>

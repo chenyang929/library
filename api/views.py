@@ -212,12 +212,14 @@ def history_list(request):
                 user = User.objects.get(pk=user_id)
             except User.DoesNotExist:
                 return Response({"info": "用户不存在"})
+            borrow_date = request.POST.get('borrow_date')
             storage.remain = remain - 1
             storage.save()
-            back_date = datetime.date.today() + datetime.timedelta(days=30)
+            back_date = datetime.datetime.strptime(borrow_date, '%Y-%m-%d') + datetime.timedelta(days=30)
+            back_date = back_date.strftime('%Y-%m-%d').split(' ')[0]
             new_history = History.objects.create(book=storage.book, book_id=storage.id,
                                                  user=user.first_name, user_id=user.id,
-                                                 back_date=back_date, status=2)
+                                                 borrow_date=borrow_date, back_date=back_date, status=2)
             serializers = HistorySerializer(new_history)
             return Response({"info": "success", "results": [serializers.data]}, status=201)
         else:
@@ -227,7 +229,8 @@ def history_list(request):
                 return Response({"info": "当前已借阅两本图书!"})
             storage.remain = remain - 1
             storage.save()
-            new_history = History.objects.create(book=storage.book, book_id=storage.id,
+            borrow_date = datetime.date.today()
+            new_history = History.objects.create(book=storage.book, book_id=storage.id, borrow_date=borrow_date,
                                                  user=request.user.first_name, user_id=request.user.id)
             serializers = HistorySerializer(new_history)
             return Response({"info": "success", "results": [serializers.data]}, status=201)

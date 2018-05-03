@@ -57,7 +57,7 @@ h1,h2,h3,h4,h5 {
 }
 
 h1 {
-    margin: 0 0 20px;
+    margin: 0 0 0;
     font-weight: 300;
     font-size: 20px;
     color: #666;
@@ -250,7 +250,7 @@ td, th {
     font-size: 13px;
     line-height: 16px;
     border-bottom: 1px solid #eee;
-    vertical-align: top;
+    vertical-align: middle;
     padding: 8px;
     font-family: "Roboto", "Lucida Grande", Verdana, Arial, sans-serif;
 }
@@ -298,7 +298,7 @@ thead th {
     padding: 5px 10px;
     line-height: normal;
     text-transform: uppercase;
-    background: #f6f6f6;
+    background: #CCFFFF;
 }
 
 thead th a:link, thead th a:visited {

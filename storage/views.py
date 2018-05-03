@@ -1,3 +1,4 @@
+import random
 from .models import Storage
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
@@ -5,6 +6,7 @@ from django.http.response import HttpResponse
 from .func import user_add
 from django.shortcuts import render
 from history.models import History
+from .proverb import words
 
 
 @login_required(login_url='login:login')
@@ -15,8 +17,10 @@ def index(request):
     if int(count % 15) != 0:
         total_page += 1
     history_lst = History.objects.filter(user_id=request.user.pk, status__in=[1, 2, 3, 4])
+    word = random.choice(words)
     context = {"storage_lst": storage_lst[:15], "count": storage_lst.count(), "history_lst": history_lst,
-               "user": request.user.first_name, "total_page": total_page, "next_page": '/library/api/storage?page=2'}
+               "user": request.user.first_name, "total_page": total_page, "next_page": '/library/api/storage?page=2',
+               'word': word}
     return render(request, "index.html", context)
 
 
@@ -36,6 +40,7 @@ def user_add_api(request):
 @login_required(login_url='login:login')
 def user_center(request):
     user_id = request.user.id
-    history_lst = History.objects.filter(user=request.user, status=5)
-    context = {"user_id": user_id, "user": request.user.first_name, "history_lst": history_lst}
+    history_lst = History.objects.filter(user_id=request.user.pk, status=5)
+    word = random.choice(words)
+    context = {"user_id": user_id, "user": request.user.first_name, "history_lst": history_lst, "word": word}
     return render(request, 'user.html', context)

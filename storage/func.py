@@ -15,7 +15,7 @@ def user_add():
 MYSQL_CONFIG = {
     'host': 'localhost',
     'port': 3306,
-    'user': 'root',
+    'user': 'coder',
     'passwd': 'My1qaz2wsx',
     'db': 'library',
     'charset': 'utf8mb4',

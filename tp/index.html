@@ -25,15 +25,16 @@
     </div>
     <!-- END Header -->
 <div class="breadcrumbs">
-书籍是人类的海洋
+{{ word }}
 </div>
     <!-- Content -->
     <div id="content" class="flex">
         <div id="content-main">
             <div class="module filtered" id="changelist">
                 <div id="changelist-filter">
-                    <h2>我的借阅</h2>
-                        <table id="myhistory">
+                    <div style="background-color: white"><h1>备注：每人最多持有2本书，每本书的借阅周期最长为1个月。</h1></div>
+                    <h2 style="margin-top: 0">我的借阅</h2>
+                        <table id="myhistory"  style="background: #0a0a0a">
                             <thead>
                                 <tr>
                                     <th>
@@ -58,7 +59,11 @@
                                 <tr class="row2">
                                     <th class="history_book">{{ history.book }}</th>
                                     <td class="history_borrow_date">{{ history.borrow_date }}</td>
+                                    {% if history.back_date %}
                                     <td class="history_back_date">{{ history.back_date }}</td>
+                                    {% else %}
+                                    <td class="history_back_date"></td>
+                                    {% endif %}
                                     {% if history.status == 0 %}
                                     <td class="history_status">借阅不通过</td>
                                     <td class="history_action"></td>
@@ -68,12 +73,12 @@
                                     {% elif history.status == 2 %}
                                     <td class="history_status">借阅中</td>
                                     <td class="history_action">
-                                        <button class="bt-history" value="{{ history.id }}">归还</button>
+                                        <button class="bt-history" title="点击归还" value="{{ history.id }}">归还</button>
                                     </td>
                                     {% elif history.status == 3 %}
                                     <td class="history_status">归还不通过</td>
                                     <td class="history_action">
-                                        <button class="bt-history" value="{{ history.id }}">归还</button>
+                                        <button class="bt-history" title="点击归还" value="{{ history.id }}">归还</button>
                                     </td>
                                     {% elif history.status == 4 %}
                                     <td class="history_status">归还审核中</td>
@@ -141,7 +146,7 @@
                             <td class="action"></td>
                             {% else %}
                             <td class="status">在库</td>
-                            <td class="action"><button class="bt-storage">借阅</button></td>
+                            <td class="action"><button class="bt-storage" title="点击借阅">借阅</button></td>
                             {% endif %}
                         </tr>
                     {% endfor %}
