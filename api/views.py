@@ -169,7 +169,7 @@ def storage_detail(request, pk):
 GET /history   获取借阅记录   user admin
 POST /history   新增借阅记录   user admin
 GET /history/1   获取某条借阅记录   user admin
-POST msg=msg delay=delay /history/1   修改某条借阅记录   user admin
+POST status=status delay=delay /history/1   修改某条借阅记录   user admin
 """
 
 
@@ -238,44 +238,43 @@ def history_list(request):
 
 @api_view(['GET', 'POST'])
 def history_detail(request, pk):
-    if not request.user.is_authenticated:
-        return Response({"info": "权限禁止"}, status=403)
     try:
         history = History.objects.get(pk=pk)
     except History.DoesNotExist:
         return Response({"info": "记录不存在"})
-    if request.method == 'POST':
-        status_old = history.status
-        if request.user.is_superuser:
-            if status_old in (1, 4):
-                msg = request.POST.get("msg")
-                if msg and msg == 'yes':
-                    history.status += 1
-                    history.back_date = datetime.date.today() + datetime.timedelta(days=30)
-                    if status_old == 4:   # 还书后把库存加1
+    status_old = history.status
+    if request.user.is_superuser or all([request.user.is_authenticated, request.user.pk == history.user_id]):
+        if request.method == 'GET':
+            serializers = HistorySerializer(history)
+            return Response({"info": "success", "results": [serializers.data]})
+        elif request.method == 'POST':
+            if not request.user.is_superuser and status_old not in [2, 3]:
+                return Response({"info": "权限禁止"}, status=403)
+            status_new = request.POST.get('status')
+            delay = request.POST.get('delay')
+            if status_old in [0, 5]:
+                pass
+            elif status_new and int(status_new) in list(range(6)):
+                history.status = int(status_new)
+                if not history.back_date:
+                    history.back_date = history.borrow_date + datetime.timedelta(days=30)
+                if int(status_new) in [0, 5]:   # 借阅不通过或是还书
+                    storage = Storage.objects.get(pk=history.book_id)
+                    storage.remain += 1
+                    storage.save()
+                    if int(status_new) == 5:
                         history.back_date = datetime.date.today()
-                        storage = Storage.objects.get(pk=history.book_id)
-                        storage.remain += 1
-                        storage.save()
-                elif msg and msg == 'no':
-                    history.status -= 1
-                    if status_old == 1:   # 借阅不同意后把库存加1
-                        storage = Storage.objects.get(pk=history.book_id)
-                        storage.remain += 1
-                        storage.save()
-        elif history.user_id == request.user.pk:
-                delay = request.POST.get('delay')   # 续借
-                if delay and status_old == 2:
-                    history_delay = history.delay
-                    history.delay = int(history_delay) ^ 1
-                elif status_old in [2, 3]:
-                    history.status = 4
-        history.save()
-        serializers = HistorySerializer(history)
-        return Response({"info": "success", "results": [serializers.data]}, status=201)
-    elif request.method == 'GET':
-        serializers = HistorySerializer(history)
-        return Response({"info": "success", "results": [serializers.data]})
+            elif int(status_old) == 2 and delay and int(delay) in [0, 1]:
+                borrow_date = history.borrow_date
+                if int(delay) == 0:
+                    history.back_date = borrow_date + datetime.timedelta(days=30)
+                else:
+                    history.back_date = borrow_date + datetime.timedelta(days=60)
+            history.save()
+            serializers = HistorySerializer(history)
+            return Response({"info": "success", "results": [serializers.data]}, status=201)
+    else:
+        return Response({"info": "权限禁止"}, status=403)
 
 
 def get_new_query(query_str):

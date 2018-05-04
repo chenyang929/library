@@ -14,7 +14,7 @@
 | GET | /history | 获取借阅记录 | user admin |
 | POST | /history | 新增借阅记录 | user admin |
 | GET | /history/1 | 获取某条借阅记录 | user admin |
-| POST | msg=msg delay=delay /history/1 | 修改某条借阅记录 | user admin |
+| POST | status=status delay=delay /history/1 | 修改某条借阅记录 | user admin |
 
 
 
