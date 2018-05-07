@@ -59,7 +59,7 @@
                     <tbody id="results">
                     {% for history in history_lst %}
                         <tr class="row1" id="{{ history.id }}" st="{{ history.status }}">
-                            <th class="date">{{ history.borrow_date }}</th>
+                            <th class="date">{{ history.borrow_date|date:"Y-m-d" }}</th>
                             <td class="book">{{ history.book }}</td>
                             <td class="user">{{ history.user }}</td>
                             {% if history.status == 1 %}

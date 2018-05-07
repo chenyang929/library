@@ -150,32 +150,30 @@ function historyListPost(storageId) {
         if (msg == 'success') {
             $("#" + storageId + " td.status").text("出库");
             $("#" + storageId + " td.action").text("");
-            let book = $("#" + storageId + " th.book").text();
-            historyShow(book);
+            let book = json["results"][0]["book"];
+            let borrow_date = json["results"][0]["borrow_date"];
+            historyShow(book, borrow_date);
         } else {
             alert(msg)
         }
     }
 }
 
-function historyShow(book) {
-    let myDate = new Date();
-    let year = myDate.getFullYear();
-    let month = myDate.getMonth() + 1;
-    let day = myDate.getDate();
+function historyShow(book, borrow_date) {
     let row = '<tr class="row2">' +
               '<th class="history_book">' + book + '</th>' +
-              '<td class="history_borrow_date">' + year + '年' + month + '月' + day  + '日' + '</td>' +
+              '<td class="history_borrow_date">' + borrow_date + '</td>' +
               '<td class="history_back_date"></td>' +
               '<td class="history_status">' + '借阅审核中' + '</td>' +
               '<td class="history_action"></td></tr>';
-    $("#history").append(row);
+    $("#history").prepend(row);
 }
 
 function historyDetailPost(historyId, ele) {
     $.ajax({
         url: '/library/api/history/' + historyId,
         type: 'POST',
+        data: {"status": 4},
         //cache: false,
         dataType: 'json',
         xhrFields: {

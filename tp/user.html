@@ -20,6 +20,7 @@
         </div>
         <div id="user-tools">
                 欢迎，{{ user }} /
+                <a href="{% url 'storage:index' %}">首页 / </a>
                 <a href="{% url 'login:logout' %}">注销</a>
         </div>
     </div>
@@ -61,8 +62,8 @@
                     {% for history in history_lst %}
                         <tr class="row2">
                             <th class="date">{{ history.book}}</th>
-                            <td class="book">{{ history.borrow_date }}</td>
-                            <td class="user">{{ history.back_date }}</td>
+                            <td class="book">{{ history.borrow_date|date:"Y-m-d" }}</td>
+                            <td class="user">{{ history.back_date|date:"Y-m-d" }}</td>
                         </tr>
                     {% endfor %}
                     </tbody>

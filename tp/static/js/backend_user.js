@@ -58,6 +58,8 @@ function submitClick(ele) {
         } else {
             userModify(ele.attr("si"), email, name, 1)
         }
+        $("#email_md").val("");
+        $("#name_md").val("");
 
     } else {
         alert('用户修改信息不完整')
@@ -188,7 +190,11 @@ function userModify(userId, email, name, pw) {
         let json = eval(response);
         let msg = json.info;
         if (msg == 'success') {
-            location.href = '/library/backend/user'
+            let first_name = json["results"][0]['first_name'];
+            let email = json["results"][0]['email'];
+            let tr = $("tr#"+ userId);
+            tr.find("th.first_name").text(first_name);
+            tr.find("td.email").text(email);
         } else{
             alert(msg)
         }

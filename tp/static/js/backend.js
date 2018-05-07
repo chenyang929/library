@@ -5,7 +5,6 @@ $(document).ready(function () {
         let type = $(this).attr('name');
         let st = $(this).closest("tr").attr("st");
         let status = 2;
-        alert(type);
         if (type=='y') {
             if (st==4) {
                 status=5

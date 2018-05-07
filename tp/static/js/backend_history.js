@@ -79,9 +79,11 @@ function submitClick(ele) {
     let borrow_date = $("#borrow_md").val();
     let delay = $("#delay_md").val();
     if (book.length>0 && user.length>0 && borrow_date.length>0) {
-        alert(status);
-        alert(delay);
-        historyModify(ele.attr("si"), status, delay)
+        historyModify(ele.attr("si"), status, delay);
+        $("#book_md").val("");
+        $("#user_md").val("");
+        $("#borrow_md").val("");
+        $("#status_md").val("2");
     } else {
         alert('借阅修改信息不完整')
     }
@@ -130,14 +132,15 @@ function historySuccess(response) {
     if (results.length > 0) {
         $.each(results, function (index) {
             let {id, book, user, borrow_date, back_date, status, delay} = results[index];
-            let action = '<button class="bt-modify-history">' + '编辑' + '</button>';
+            let action = '';
             let str = '已归还';
             if (status==0) {
                 str = '借阅不通过'
             } else if (status==1) {
                 str = '借阅审核中'
             } else if (status==2) {
-                str = '借阅中'
+                str = '借阅中';
+                action = '<button class="bt-modify-history">' + '编辑' + '</button>'
             } else if (status==3) {
                 str = '归还不通过'
             } else if (status==4) {
@@ -147,7 +150,7 @@ function historySuccess(response) {
             if (delay==1) {
                 d = '是'
             }
-            row += '<tr class="row1" id="' + id + '">' +
+            row += '<tr class="row1" id="' + id + '" st="' + status + '" dy="' + delay + '">' +
                 '<th class="book">' + book + '</th>' +
                 '<td class="user">' + user + '</td>' +
                 '<td class="borrow_date">' + borrow_date + '</td>' +
@@ -237,7 +240,20 @@ function historyModify(historyId, status, delay) {
         let json = eval(response);
         let msg = json.info;
         if (msg == 'success') {
-            location.href = '/library/backend/history'
+            //location.href = '/library/backend/history'
+            let status = json["results"][0]['status'];
+            let delay = json["results"][0]['delay'];
+            let backDate = json["results"][0]['back_date'];
+            $("tr#"+ historyId).find("td.back_date").text(backDate);
+            if (status==5) {
+                $("tr#"+ historyId).find("td.status").text("已归还");
+                $("tr#"+ historyId).find("td.action").html("");
+            }
+            if (delay==0) {
+                $("tr#"+ historyId).find("td.delay").text("否");
+            } else {
+                $("tr#"+ historyId).find("td.delay").text("是");
+            }
         } else{
             alert(msg)
         }

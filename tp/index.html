@@ -58,9 +58,9 @@
                             {% for history in history_lst %}
                                 <tr class="row2">
                                     <th class="history_book">{{ history.book }}</th>
-                                    <td class="history_borrow_date">{{ history.borrow_date }}</td>
+                                    <td class="history_borrow_date">{{ history.borrow_date|date:"Y-m-d" }}</td>
                                     {% if history.back_date %}
-                                    <td class="history_back_date">{{ history.back_date }}</td>
+                                    <td class="history_back_date">{{ history.back_date|date:"Y-m-d" }}</td>
                                     {% else %}
                                     <td class="history_back_date"></td>
                                     {% endif %}

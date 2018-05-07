@@ -59,7 +59,10 @@ function submitClick(ele) {
     let inventory = $("#inventory_md").val();
     let remain = $("#remain_md").val();
     if (book.length>0 && inventory.length>0 && remain.length>0) {
-        storageModify(ele.attr("si"), book, inventory, remain)
+        storageModify(ele.attr("si"), book, inventory, remain);
+        $("#book_md").val("");
+        $("#inventory_md").val("");
+        $("#remain_md").val("");
     } else {
         alert('图书修改信息不完整')
     }
@@ -195,7 +198,18 @@ function storageModify(storageId, book, inventory, remain) {
         let json = eval(response);
         let msg = json.info;
         if (msg == 'success') {
-            location.href = '/library/backend/storage'
+            let book = json["results"][0]['book'];
+            let inventory = json["results"][0]['inventory'];
+            let remain = json["results"][0]['remain'];
+            let tr = $("tr#"+ storageId);
+            tr.find("th.book").text(book);
+            tr.find("td.inventory").text(inventory);
+            tr.find("td.remain").text(remain);
+            if (remain==0) {
+                tr.find("td.status").text("出库")
+            } else {
+                tr.find("td.status").text("在库")
+            }
         } else{
             alert(msg)
         }

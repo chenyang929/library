@@ -13,7 +13,7 @@ $(document).ready(function () {
 
 function pwChange(userId, pw) {
     $.ajax({
-        url: '/library/user/' + userId,
+        url: '/library/api/user/' + userId,
         type: 'POST',
         data: {"pw": pw},
         cache: false,
