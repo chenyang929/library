@@ -149,6 +149,7 @@ function historyListPost(storageId) {
         let msg = json.info;
         if (msg == 'success') {
             $("#" + storageId + " td.status").text("出库");
+            $("#" + storageId + " td.remain").text("0");
             $("#" + storageId + " td.action").text("");
             let book = json["results"][0]["book"];
             let borrow_date = json["results"][0]["borrow_date"];

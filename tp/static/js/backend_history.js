@@ -70,7 +70,7 @@ function modifyClick(ele) {
     $("#status_md").val(status);
     $("#borrow_md").val(borrow_date);
     $("#delay_md").val(delay);
-    $(".modify-div").show();
+    $(".modify-div").slideDown();
 }
 
 function submitClick(ele) {
@@ -85,7 +85,7 @@ function submitClick(ele) {
         $("#user_md").val("");
         $("#borrow_md").val("");
         $("#status_md").val("2");
-        $(".modify-div").hide();
+        $(".modify-div").slideUp();
     } else {
         alert('借阅修改信息不完整')
     }

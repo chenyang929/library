@@ -52,7 +52,7 @@ function modifyClick(ele) {
     $("#book_md").val(book);
     $("#inventory_md").val(inventory);
     $("#remain_md").val(remain);
-    $(".modify-div").show()
+    $(".modify-div").slideDown()
 }
 
 function submitClick(ele) {
@@ -64,7 +64,7 @@ function submitClick(ele) {
         $("#book_md").val("");
         $("#inventory_md").val("");
         $("#remain_md").val("");
-        $(".modify-div").hide();
+        $(".modify-div").slideUp();
     } else {
         alert('图书修改信息不完整')
     }

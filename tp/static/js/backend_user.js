@@ -46,7 +46,7 @@ function modifyClick(ele) {
     $(".modify_submit").attr("si", userId);
     $("#email_md").val(email);
     $("#name_md").val(name);
-    $(".modify-div").show();
+    $(".modify-div").slideDown();
 }
 
 function submitClick(ele) {
@@ -61,7 +61,7 @@ function submitClick(ele) {
         }
         $("#email_md").val("");
         $("#name_md").val("");
-        $(".modify-div").hide();
+        $(".modify-div").slideUp();
 
     } else {
         alert('用户修改信息不完整')
