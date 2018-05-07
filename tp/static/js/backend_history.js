@@ -30,7 +30,7 @@ $(document).ready(function () {
 
     //编辑
     $(".bt-modify-history").click(function () {
-        modifyClick($(this))
+        modifyClick($(this));
     });
     $("#modify_submit").click(function () {
         submitClick($(this))
@@ -70,6 +70,7 @@ function modifyClick(ele) {
     $("#status_md").val(status);
     $("#borrow_md").val(borrow_date);
     $("#delay_md").val(delay);
+    $(".modify-div").show();
 }
 
 function submitClick(ele) {
@@ -84,6 +85,7 @@ function submitClick(ele) {
         $("#user_md").val("");
         $("#borrow_md").val("");
         $("#status_md").val("2");
+        $(".modify-div").hide();
     } else {
         alert('借阅修改信息不完整')
     }

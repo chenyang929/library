@@ -21,7 +21,7 @@ $(document).ready(function () {
 
     //编辑用户
     $(".bt-modify-user").click(function () {
-        modifyClick($(this))
+        modifyClick($(this));
     });
     $(".modify_submit").click(function () {
         submitClick($(this))
@@ -46,6 +46,7 @@ function modifyClick(ele) {
     $(".modify_submit").attr("si", userId);
     $("#email_md").val(email);
     $("#name_md").val(name);
+    $(".modify-div").show();
 }
 
 function submitClick(ele) {
@@ -60,6 +61,7 @@ function submitClick(ele) {
         }
         $("#email_md").val("");
         $("#name_md").val("");
+        $(".modify-div").hide();
 
     } else {
         alert('用户修改信息不完整')

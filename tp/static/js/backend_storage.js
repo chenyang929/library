@@ -25,7 +25,7 @@ $(document).ready(function () {
 
     //编辑图书
     $(".bt-modify-storage").click(function () {
-        modifyClick($(this))
+        modifyClick($(this));
     });
     $("#modify_submit").click(function () {
         submitClick($(this))
@@ -52,6 +52,7 @@ function modifyClick(ele) {
     $("#book_md").val(book);
     $("#inventory_md").val(inventory);
     $("#remain_md").val(remain);
+    $(".modify-div").show()
 }
 
 function submitClick(ele) {
@@ -63,6 +64,7 @@ function submitClick(ele) {
         $("#book_md").val("");
         $("#inventory_md").val("");
         $("#remain_md").val("");
+        $(".modify-div").hide();
     } else {
         alert('图书修改信息不完整')
     }
