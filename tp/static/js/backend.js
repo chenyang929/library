@@ -2,15 +2,30 @@ $(document).ready(function () {
     //借阅审核
     $(".bt-yn").click(function () {
         let historyId = $(this).closest("tr").attr("id");
-        historyYesNo(historyId, $(this).attr("name"))
+        let type = $(this).attr('name');
+        let st = $(this).closest("tr").attr("st");
+        let status = 2;
+        alert(type);
+        if (type=='y') {
+            if (st==4) {
+                status=5
+            }
+        } else {
+            if (st==1) {
+                status=0
+            } else {
+                status=3
+            }
+        }
+        historyYesNo(historyId, status)
     });
 });
 
-function historyYesNo(historyId, msg) {
+function historyYesNo(historyId, status) {
     $.ajax({
         url: '/library/api/history/' + historyId,
         type: 'POST',
-        data: {"msg": msg},
+        data: {"status": status},
         cache: false,
         dataType: 'json',
         xhrFields: {
@@ -31,4 +46,3 @@ function historyYesNo(historyId, msg) {
         $("tr#" + historyId).hide();
     }
 }
-

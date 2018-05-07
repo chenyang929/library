@@ -30,20 +30,23 @@ $(document).ready(function () {
 
     //编辑
     $(".bt-modify-history").click(function () {
-        alert($(this).text())
+        modifyClick($(this))
+    });
+    $("#modify_submit").click(function () {
+        submitClick($(this))
     });
 
     //新增借阅
-    $("#datetimepicker").datetimepicker({
+    $.datetimepicker.setLocale('zh');
+    $("#datetimepicker1").datetimepicker({
         timepicker: false,
         format: 'Y-m-d',
     });
-    $.datetimepicker.setLocale('zh');
 
     $("#history_submit").click(function () {
         let userId = $("#changelist-check select.user").val();
         let storageId = $("#changelist-check select.book").val();
-        let borrowDate = $("#datetimepicker").val();
+        let borrowDate = $("#datetimepicker1").val();
         if (borrowDate.length>0) {
             historyNew(userId, storageId, borrowDate);
         } else {
@@ -53,6 +56,36 @@ $(document).ready(function () {
     });
 
 });
+
+function modifyClick(ele) {
+    let historyId = ele.closest("tr").attr("id");
+    let book = ele.closest("tr").find("th.book").text();
+    let user = ele.closest("tr").find("td.user").text();
+    let status = ele.closest("tr").attr("st");
+    let borrow_date = ele.closest("tr").find("td.borrow_date").text();
+    let delay = ele.closest("tr").attr("dy");
+    $("#modify_submit").attr("si", historyId);
+    $("#book_md").val(book);
+    $("#user_md").val(user);
+    $("#status_md").val(status);
+    $("#borrow_md").val(borrow_date);
+    $("#delay_md").val(delay);
+}
+
+function submitClick(ele) {
+    let book = $("#book_md").val();
+    let user = $("#user_md").val();
+    let status = $("#status_md").val();
+    let borrow_date = $("#borrow_md").val();
+    let delay = $("#delay_md").val();
+    if (book.length>0 && user.length>0 && borrow_date.length>0) {
+        alert(status);
+        alert(delay);
+        historyModify(ele.attr("si"), status, delay)
+    } else {
+        alert('借阅修改信息不完整')
+    }
+}
 
 function goPage(url) {
     $.get(url, historySuccess)
@@ -142,7 +175,7 @@ function historyAfterLoad() {
     $('.bt-modify-history').bind(
         "click",
         function () {
-            alert($(this).text())
+            modifyClick($(this))
         }
     )
 }
@@ -177,4 +210,36 @@ function historyNew(userID, storageId, borrowDate) {
         location.href = '/library/backend/history'
     }
 
+}
+
+function historyModify(historyId, status, delay) {
+    $.ajax({
+        url: '/library/api/history/' + historyId,
+        type: 'POST',
+        data: {"status": status, "delay": delay},
+        cache: false,
+        dataType: 'json',
+        xhrFields: {
+             withCredentials: true
+        },
+        crossDomain: true,
+        beforeSend: loadFunction,
+        error: errorFunction,
+        success: successFunction
+    });
+    function loadFunction(xhr) {
+        xhr.setRequestHeader("X-CSRFToken", $.cookie('csrftoken'));
+    }
+    function errorFunction() {
+            alert("请求失败");
+        }
+    function successFunction(response) {
+        let json = eval(response);
+        let msg = json.info;
+        if (msg == 'success') {
+            location.href = '/library/backend/history'
+        } else{
+            alert(msg)
+        }
+    }
 }

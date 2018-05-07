@@ -36,27 +36,46 @@
         <div id="content-main">
             <div class="module filtered" id="changelist">
                 <div id="changelist-check">
-                    <h2>新增借阅</h2>
+                    <h2>借阅管理</h2>
                     <div class="history_new" style="margin-top: 10px">
-                    <label>用户
-                    <select class="user" style="width:100px;" required>
-                        {% for user in user_lst %}
-                            <option value="{{ user.id }}">{{ user.first_name }}</option>
-                        {% endfor %}
-                    </select></label>
-                    <label>图书
-                    <select class="book" style="width:100px;" required>
-                        {% for storage in storage_lst %}
-                            <option value="{{ storage.id }}">{{ storage.book }}</option>
-                        {% endfor %}
-                    </select></label><br>
-                    <label>日期
-                        <input id="datetimepicker" type="text" />
-                    </label>
-                    <input type="submit" value="提交" id="history_submit"/>
+                    <h3>新增借阅</h3>
+                        <label>用户
+                        <select class="user" style="width:25%;" required>
+                            {% for user in user_lst %}
+                                <option value="{{ user.id }}">{{ user.first_name }}</option>
+                            {% endfor %}
+                        </select></label><br>
+                        <label>图书
+                        <select class="book" style="width:75%;" required>
+                            {% for storage in storage_lst %}
+                                <option value="{{ storage.id }}">{{ storage.book }}</option>
+                            {% endfor %}
+                        </select></label><br>
+                        <label>日期
+                            <input id="datetimepicker1" type="text" style="width:20%;"/>
+                        </label>
+                        <input type="submit" value="提交" id="history_submit"/>
+                    </div>
+                    <div class="modify-div">
+                        <h3>借阅编辑</h3>
+                        <label>书名 <input type="text" name="book" id="book_md" readonly="readonly" style="width: 60%"/></label><br>
+                        <label>用户 <input type="text" name="user" id="user_md" readonly="readonly" style="width: 20%"/></label><br>
+                        <label>借阅日期 <input type="text" name="borrow_date" id="borrow_md" readonly="readonly" style="width: 20%"/></label><br>
+                        <label>借阅状态
+                            <select id="status_md" style="width: 20%">
+                                <option value="2">借阅中</option>
+                                <option value="5">已归还</option>
+                            </select>
+                        </label><br>
+                        <label>是否续借
+                            <select id="delay_md" style="width: 20%">
+                                <option value="0">否</option>
+                                <option value="1">是</option>
+                            </select>
+                        </label><br>
+                        <input type="submit" value="提交" si="" id="modify_submit"/>
                     </div>
                 </div>
-
                 <div class="actions search">
                     <label>状态筛选
                     <select name="action" id="select" required>
@@ -104,7 +123,7 @@
                                <div class="result_col">归还截止</div>
                             </th>
                             <th>
-                               <div class="result_col">状态</div>
+                               <div class="result_col">借阅状态</div>
                             </th>
                             <th>
                                <div class="result_col">是否续借</div>
@@ -116,7 +135,7 @@
                     </thead>
                     <tbody id="results">
                     {% for history in history_lst %}
-                        <tr class="row1" id="{{ history.id }}">
+                        <tr class="row1" id="{{ history.id }}" st="{{ history.status }}" dy="{{ history.delay }}">
                             <th class="book">{{ history.book }}</th>
                             <td class="user">{{ history.user }}</td>
                             <td class="borrow_date">{{ history.borrow_date }}</td>
@@ -139,13 +158,17 @@
                             <td class="status">已归还</td>
                             {% endif %}
                             {% if history.delay == 0 %}
-                            <th class="delay">否</th>
+                            <td class="delay">否</td>
                             {% else %}
-                            <th class="delay">是</th>
+                            <td class="delay">是</td>
                             {% endif %}
+                            {% if history.status == 2  %}
                             <td class="action">
                                 <button class="bt-modify-history">编辑</button>
                             </td>
+                            {% else %}
+                            <td class="action"></td>
+                            {% endif %}
                         </tr>
                     {% endfor %}
                     </tbody>

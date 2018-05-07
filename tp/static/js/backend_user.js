@@ -21,7 +21,10 @@ $(document).ready(function () {
 
     //编辑用户
     $(".bt-modify-user").click(function () {
-        alert($(this).text())
+        modifyClick($(this))
+    });
+    $(".modify_submit").click(function () {
+        submitClick($(this))
     });
 
     //新增用户
@@ -29,13 +32,37 @@ $(document).ready(function () {
         let email = $("#email_in").val();
         let name = $("#name_in").val();
         if (email.length>0 && name.length>0) {
-            //alert('ok');
             userNew(email, name)
         } else {
             alert("用户信息不完整")
         }
     });
 });
+
+function modifyClick(ele) {
+    let userId = ele.closest("tr").attr("id");
+    let email = ele.closest("tr").find("td.email").text();
+    let name = ele.closest("tr").find("th.first_name").text();
+    $(".modify_submit").attr("si", userId);
+    $("#email_md").val(email);
+    $("#name_md").val(name);
+}
+
+function submitClick(ele) {
+    let email = $("#email_md").val();
+    let name = $("#name_md").val();
+    if (email.length>0 && name.length>0) {
+        let type = ele.attr("name");
+        if (type==0) {
+            userModify(ele.attr("si"), email, name, 0)
+        } else {
+            userModify(ele.attr("si"), email, name, 1)
+        }
+
+    } else {
+        alert('用户修改信息不完整')
+    }
+}
 
 function goPage(url) {
     $.get(url, userSuccess)
@@ -99,7 +126,7 @@ function userAfterLoad() {
     $('.bt-modify-user').bind(
         "click",
         function () {
-            alert($(this).text())
+            modifyClick($(this))
         }
     )
 }
@@ -109,6 +136,38 @@ function userNew(email, name) {
         url: '/library/api/user/',
         type: 'POST',
         data: {"email": email, "name": name},
+        cache: false,
+        dataType: 'json',
+        xhrFields: {
+             withCredentials: true
+        },
+        crossDomain: true,
+        beforeSend: loadFunction,
+        error: errorFunction,
+        success: successFunction
+    });
+    function loadFunction(xhr) {
+        xhr.setRequestHeader("X-CSRFToken", $.cookie('csrftoken'));
+    }
+    function errorFunction() {
+            alert("请求失败");
+        }
+    function successFunction(response) {
+        let json = eval(response);
+        let msg = json.info;
+        if (msg == 'success') {
+            location.href = '/library/backend/user'
+        } else{
+            alert(msg)
+        }
+    }
+}
+
+function userModify(userId, email, name, pw) {
+    $.ajax({
+        url: '/library/api/user/' + userId,
+        type: 'POST',
+        data: {"user_name": email, "first_name": name, "pw": pw},
         cache: false,
         dataType: 'json',
         xhrFields: {

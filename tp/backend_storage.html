@@ -35,11 +35,19 @@
         <div id="content-main">
             <div class="module filtered" id="changelist">
                 <div id="changelist-check">
-                    <h2>新书入库</h2>
+                    <h2>图书管理</h2>
                     <div class="book_new" style="margin-top: 10px">
-                        <label>图书 <input type="text" name="book" id="book_in"/></label><br>
-                        <label>库存 <input type="text" name="inventory" id="inventory_in" value="1"/></label><br>
+                        <h3>新书入库</h3>
+                        <label>图书 <input type="text" name="book" id="book_in" style="width: 60%"/></label><br>
+                        <label>库存 <input type="text" name="inventory" id="inventory_in" value="1" style="width: 5%"/></label><br>
                         <input type="submit" value="提交" id="storage_submit"/>
+                    </div><br>
+                    <div class="modify-div">
+                        <h3>图书编辑</h3>
+                        <label>书名 <input type="text" name="book" id="book_md" style="width: 60%"/></label><br>
+                        <label>库存 <input type="text" name="inventory" id="inventory_md" style="width: 5%"/></label><br>
+                        <label>剩余 <input type="text" name="remain" id="remain_md" style="width: 5%"/></label><br>
+                        <input type="submit" value="提交" si="" id="modify_submit"/>
                     </div>
                 </div>
 

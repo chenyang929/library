@@ -58,7 +58,7 @@
                     </thead>
                     <tbody id="results">
                     {% for history in history_lst %}
-                        <tr class="row1" id="{{ history.id }}">
+                        <tr class="row1" id="{{ history.id }}" st="{{ history.status }}">
                             <th class="date">{{ history.borrow_date }}</th>
                             <td class="book">{{ history.book }}</td>
                             <td class="user">{{ history.user }}</td>
@@ -68,8 +68,8 @@
                             <td class="status">归还</td>
                             {% endif %}
                             <td class="action">
-                                <button class="bt-yn" name="yes">同意</button>
-                                <button class="bt-yn" name="no">不同意</button>
+                                <button class="bt-yn" name="y">同意</button>
+                                <button class="bt-yn" name="n">不同意</button>
                             </td>
                         </tr>
                     {% endfor %}

@@ -61,15 +61,18 @@ def user_detail(request, pk):
             user_name = request.POST.get('user_name')
             first_name = request.POST.get('first_name')
             pw = request.POST.get('pw')
-            if all([user_name, first_name]):
+            if pw and int(pw) == 1:
+                user.set_password(user_name)  # 重置密码
+                user.save()
+                serializers = UserSerializer(user)
+                return Response({"info": "success", "results": [serializers.data]}, status=201)
+            elif all([user_name, first_name]):
                 new_user = User.objects.filter(username=user_name)
                 if new_user and int(new_user[0].id) != int(pk):
                     return Response({"info": "用户已存在"})
                 user.username = user_name
                 user.first_name = first_name
                 user.email = user_name
-                if pw:
-                    user.set_password(user_name)   # 重置密码
                 user.save()
                 serializers = UserSerializer(user)
                 return Response({"info": "success", "results": [serializers.data]}, status=201)
@@ -264,7 +267,8 @@ def history_detail(request, pk):
                     storage.save()
                     if int(status_new) == 5:
                         history.back_date = datetime.date.today()
-            elif int(status_old) == 2 and delay and int(delay) in [0, 1]:
+            if int(status_old) == 2 and delay and int(delay) in [0, 1]:
+                history.delay = delay
                 borrow_date = history.borrow_date
                 if int(delay) == 0:
                     history.back_date = borrow_date + datetime.timedelta(days=30)

@@ -35,11 +35,19 @@
         <div id="content-main">
             <div class="module filtered" id="changelist">
                 <div id="changelist-check">
-                    <h2>新增用户</h2>
+                    <h2>用户管理</h2>
                     <div class="user_new" style="margin-top: 10px">
-                        邮箱 <input type="text" name="email" id="email_in"/><br>
-                        姓名 <input type="text" name="name" id="name_in"/><br>
+                        <h3>新增用户</h3>
+                        邮箱 <input type="text" name="email" id="email_in" style="width: 40%"/><br>
+                        姓名 <input type="text" name="name" id="name_in" style="width: 20%"/><br>
                         <input type="submit" value="提交" id="user_submit"/>
+                    </div>
+                    <div class="modify-div">
+                        <h3>用户编辑</h3>
+                        <label>邮箱 <input type="text" name="email" id="email_md" style="width: 40%"/></label><br>
+                        <label>姓名 <input type="text" name="name" id="name_md" style="width: 20%"/></label><br>
+                        <input type="submit" value="提交" si="" name="0" class="modify_submit"/>
+                        <input type="submit" value="密码重置" si="" name="1" class="modify_submit"/>
                     </div>
                 </div>
                 <div class="actions search">

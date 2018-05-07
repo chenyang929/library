@@ -25,7 +25,10 @@ $(document).ready(function () {
 
     //编辑图书
     $(".bt-modify-storage").click(function () {
-        alert($(this).text())
+        modifyClick($(this))
+    });
+    $("#modify_submit").click(function () {
+        submitClick($(this))
     });
 
     //新增图书
@@ -39,6 +42,28 @@ $(document).ready(function () {
         }
     });
 });
+
+function modifyClick(ele) {
+    let storageId = ele.closest("tr").attr("id");
+    let book = ele.closest("tr").find("th.book").text();
+    let inventory = ele.closest("tr").find("td.inventory").text();
+    let remain = ele.closest("tr").find("td.remain").text();
+    $("#modify_submit").attr("si", storageId);
+    $("#book_md").val(book);
+    $("#inventory_md").val(inventory);
+    $("#remain_md").val(remain);
+}
+
+function submitClick(ele) {
+    let book = $("#book_md").val();
+    let inventory = $("#inventory_md").val();
+    let remain = $("#remain_md").val();
+    if (book.length>0 && inventory.length>0 && remain.length>0) {
+        storageModify(ele.attr("si"), book, inventory, remain)
+    } else {
+        alert('图书修改信息不完整')
+    }
+}
 
 function goPage(url) {
     $.get(url, storageSuccess)
@@ -108,7 +133,7 @@ function storageAfterLoad() {
     $('.bt-modify-storage').bind(
         "click",
         function () {
-            alert($(this).text())
+            modifyClick($(this))
         }
     )
 }
@@ -118,6 +143,38 @@ function storageNew(book, inventory) {
         url: '/library/api/storage',
         type: 'POST',
         data: {"book": book, "inventory": inventory},
+        cache: false,
+        dataType: 'json',
+        xhrFields: {
+             withCredentials: true
+        },
+        crossDomain: true,
+        beforeSend: loadFunction,
+        error: errorFunction,
+        success: successFunction
+    });
+    function loadFunction(xhr) {
+        xhr.setRequestHeader("X-CSRFToken", $.cookie('csrftoken'));
+    }
+    function errorFunction() {
+            alert("请求失败");
+        }
+    function successFunction(response) {
+        let json = eval(response);
+        let msg = json.info;
+        if (msg == 'success') {
+            location.href = '/library/backend/storage'
+        } else{
+            alert(msg)
+        }
+    }
+}
+
+function storageModify(storageId, book, inventory, remain) {
+    $.ajax({
+        url: '/library/api/storage/' + storageId,
+        type: 'POST',
+        data: {"book": book, "inventory": inventory, "remain": remain},
         cache: false,
         dataType: 'json',
         xhrFields: {
