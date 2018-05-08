@@ -3,7 +3,6 @@ $(document).ready(function () {
         let pw = $("#pw").val();
         let pw1 = $("#pw1").val();
         if (pw.length>0 && pw == pw1) {
-            //alert(pw);
             pwChange($("#pw_submit").val(), pw)
         } else {
             alert("两次密码不一致")
@@ -33,8 +32,8 @@ function pwChange(userId, pw) {
             alert("请求失败");
         }
     function successFunction(response) {
-        alert("请重新登录");
+        alert("密码修改成功，请重新登录");
         $.removeCookie('csrftoken');
-        location.href = '/library/'
+        location.href = '/'
     }
 }
