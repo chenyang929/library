@@ -5,7 +5,7 @@ from rest_framework.decorators import api_view
 
 @api_view(['GET', 'POST'])
 def login_view(request):
-    link = '/library/'
+    link = '/'
     if request.user.is_authenticated:
         if request.user.is_superuser:
             link = '/library/backend/'
