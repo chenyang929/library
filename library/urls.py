@@ -19,5 +19,5 @@ urlpatterns = [
     path('library/login/', include('login.urls')),
     path('library/backend/', include('backend.urls')),
     path('library/api/', include('api.urls')),
-    path('library/', include('storage.urls')),
+    path('', include('storage.urls')),
 ]
