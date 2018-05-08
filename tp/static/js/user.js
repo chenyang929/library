@@ -35,6 +35,6 @@ function pwChange(userId, pw) {
     function successFunction(response) {
         alert("请重新登录");
         $.removeCookie('csrftoken');
-        location.href = '/library/'
+        location.href = '/'
     }
 }
