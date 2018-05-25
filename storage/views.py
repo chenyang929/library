@@ -11,6 +11,10 @@ from .proverb import words
 
 @login_required(login_url='login:login')
 def index(request):
+    print(request)
+    print('-'*20)
+    ss = request.session
+    print(dict(ss))
     storage_lst = Storage.objects.all()
     count = storage_lst.count()
     total_page = int(count / 15)

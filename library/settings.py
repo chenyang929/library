@@ -25,7 +25,7 @@ SECRET_KEY = 'e&+l^y+uysq2%x!6%dpo5i4aj2d3xg)tj&9=4s+niqz$tfs%hn'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['127.0.0.1', '192.168.38.8']
+ALLOWED_HOSTS = ['127.0.0.1', ]
 
 
 # Application definition
@@ -132,3 +132,7 @@ STATICFILES_DIRS = [
 ]
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
+
+# 设置全局session
+SESSION_COOKIE_AGE = 604800   # 失效时间（秒）默认14天1209600秒
+#SESSION_SAVE_EVERY_REQUEST = True  # 设为True，则每次请求都会把过期时间从当前时间加上失效时间
