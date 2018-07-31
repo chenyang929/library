@@ -28,7 +28,7 @@
 | GET | /history/1 | 获取某条借阅记录 | user admin |
 | POST | status=status delay=delay /history/1 | 修改某条借阅记录 | user admin |
 ### 预览说明
-项目地址[library.horizon365.xyz](http://library.horizon365.xyz)
+
 
 
 
